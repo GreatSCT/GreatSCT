@@ -13,15 +13,12 @@ def genSCT():
 	fileFindReplace('payload.sct', 'exampleprogid', genProgID())
 	fileFindReplace('payload.sct', 'exampleclassid', str(genClassID()))
 
-
 def genProgID(size=8, chars=ascii_uppercase + digits):
 	progid = ''.join(choice(chars) for _ in range(size))
 	return progid
-
 
 def fileFindReplace(filename, find, replace):
 	for line in fileinput.input(filename, inplace=True):
 		line = line.rstrip().replace(find, replace)
 		print(line)
-
 genSCT()
