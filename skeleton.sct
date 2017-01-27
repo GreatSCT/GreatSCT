@@ -1,0 +1,54 @@
+<?XML version="1.0"?>
+<package>
+<?component error="true" debug="true"?>
+
+   <comment>
+      This skeleton shows how script component elements are 
+      assembled into a .wsc file.
+   </comment>
+
+<component id="MyScriptlet">
+   <registration
+      progid="progID"
+      description="description"
+      version="version"
+      clsid="{00000000-0000-0000-000000000000}"/>
+
+   <reference object="progID">
+
+   <public>
+      <property name="propertyname"/>
+      <method name="methodname"/>
+      <event name="eventname"/>
+   </public>
+
+   <implements type=COMhandlerName id=internalName>
+      (interface-specific definitions here)
+   </implements>
+
+   <script language="VBScript">
+      <![CDATA[
+      dim propertyname
+      Function methodname()
+      ' Script here.
+      End Function
+      ]]>
+   </script>
+
+   <script language="JScript">
+      <![CDATA[
+      function get_propertyname()
+      { // Script here.
+      }
+      function put_propertyname(newValue)
+      { // Script here.
+         fireEvent(eventname)
+      }
+      ]]>
+   </script>
+
+   <object id="objID" classid="clsid:00000000-0000-0000-000000000000">
+   <resource ID="resourceID1">string or number here</resource>
+   <resource ID="resourceID2">string or number here</resource>
+</component>
+</package>
