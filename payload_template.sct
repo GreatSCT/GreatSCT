@@ -1,0 +1,10 @@
+<?XML version="1.0"?>
+<scriptlet>
+	<registration progid="536c68" classid="{df7af514-397a-4276-8ec9-03901fdf3b49}" >
+		<script language="vbscript">
+		<![CDATA[
+'Insert VBS
+		]]>
+		</script>
+	</registration>
+</scriptlet>
