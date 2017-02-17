@@ -19,29 +19,29 @@ def convertToVBAFormat(intext):
 	
 	Returns list of strings
 	'''
-        chars = list(str(intext))
- 
-        chunks = []
-        temp = []
- 
-        x = 0
-        cont = True
- 
-        while cont == True:
-                if x == len(chars):
-                        cont = False
-                        chunks.append(''.join(temp))
-                elif x % 254 == 0 and x > 1:
-                        while chars[x] != '&':
-                                temp.append(chars[x])
-                                x += 1
-                        temp.append(chars[x])
-                        temp.append(' _')
-                        x += 1
-                        chunks.append(''.join(temp))
-                        temp = []
-                else:
-                        temp.append(chars[x])
-                        x += 1
-        
-        return chunks
+	chars = list(str(intext))
+
+	chunks = []
+	temp = []
+
+	x = 0
+	cont = True
+
+	while cont == True:
+		if x == len(chars):
+			cont = False
+			chunks.append(''.join(temp))
+		elif x % 254 == 0 and x > 1:
+			while chars[x] != '&':
+				temp.append(chars[x])
+				x += 1
+			temp.append(chars[x])
+			temp.append(' _')
+			x += 1
+			chunks.append(''.join(temp))
+			temp = []
+		else:
+			temp.append(chars[x])
+			x += 1
+
+	return chunks
