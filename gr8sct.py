@@ -1,24 +1,27 @@
 #!/usr/bin/env python
-from uuid import uuid4
-from string import ascii_uppercase, digits
-from random import choice
-import fileinput
-from shutil import copyfile
+import configparser
+from fileops import *
+from generator import genSCT
 
-def genClassID():
-	return uuid4()
+'''
+The main program for Great SCT. Great Scott Marty, this project 
+aims to make COM scriptlet payloads great agian.
 
-def genSCT():
-	copyfile('payload_template.sct', 'payload.sct')
-	fileFindReplace('payload.sct', 'exampleprogid', genProgID())
-	fileFindReplace('payload.sct', 'exampleclassid', str(genClassID()))
+See config/default.cfg for an example configuration file.
+'''
 
-def genProgID(size=8, chars=ascii_uppercase + digits):
-	progid = ''.join(choice(chars) for _ in range(size))
-	return progid
+# Global Variables
+config = configparser.ConfigParser()
+# Read the default configuration file
+config.read('./config/default.cfg')
+# Get and set the config options
+framework = getFramework(config)
+shellcode = getShellCode(config)
+stagingMethod = getStagingMethod(config)
+redirector = getRedirector(config)
+x86process = getX86Process(config)
+x64process = getX64Process(config)
+sslCache = getSSLCache(config)
 
-def fileFindReplace(filename, find, replace):
-	for line in fileinput.input(filename, inplace=True):
-		line = line.rstrip().replace(find, replace)
-		print(line)
-genSCT()
+# Main
+genSCT(framework, stagingMethod, redirector, x86process, x64process)

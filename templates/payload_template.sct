@@ -1,10 +1,6 @@
 <?XML version="1.0"?>
 <scriptlet>
 	<registration progid="exampleprogid" classid="{exampleclassid}" >
-		<script language="vbscript">
-		<![CDATA[
-' Insert VBS
-		]]>
-		</script>
+		'Insert
 	</registration>
 </scriptlet>
