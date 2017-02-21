@@ -12,6 +12,22 @@ def fileFindReplace(filename, find, replace):
 		line = line.rstrip().replace(find, replace)
 		print(line)
 
+def parse(config):
+	for i in config:
+		print(config[i]);
+		if 'default' in config[i]:
+			method = config[i]['default'];
+			print('Default method: {0}'.format(method));
+			if method in config[i]:
+				value = config[i][method];
+				print("Method allowed and has a default value of:\n\t{0}".format(value));
+			elif 'allowWilds' in config[i]:	
+				value = config[i]['default'];
+				print("Method allows wildcards, current value is:\n\t{0}".format(value));
+			else:
+				print("Default method set to {0}, but supported methods are:\n\t{1}".format(method, list(config[i])));
+		input();
+
 def getFramework(config):
 	'''
 	Gets the framework from the config file.

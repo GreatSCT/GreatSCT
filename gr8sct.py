@@ -14,6 +14,8 @@ See config/default.cfg for an example configuration file.
 config = configparser.ConfigParser()
 # Read the default configuration file
 config.read('./config/default.cfg')
+parse(config);
+input();
 # Get and set the config options
 framework = getFramework(config)
 shellcode = getShellCode(config)
