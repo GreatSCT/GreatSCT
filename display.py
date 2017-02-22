@@ -1,23 +1,20 @@
 #!/usr/bin/env python
 import os
+import cmd
+from fileops import *
+from configparser import ConfigParser
+from generator import genSCT
+
 '''
 This module is used for displaying information and interactive cli.
 '''
 
 
-class Display:
+class Display(cmd.Cmd):
 	'''
 	Initialize the object to clear the screen
 	'''
-	def __init__(self):
-		if(os.name == 'nt'):
-			self.clearSc = 'cls'
-		else:
-			self.clearSc = 'clear'
-
-	self.clear()
-		#The following is 100% functionally necessary
-		print("""                     ______,------'--"-.                   
+	intro = """                     ______,------'--"-.
                     /                    \                 
                 .--'      ,____,------.__/-._              
              ,-/         |                   \_            
@@ -56,37 +53,41 @@ _________\______/_/  \__|__/_,---/  //____/  /
 ____________________________/______/______/_/              
 ___________________________________________________________
 ___________________________________________________________
-Lopi                                               Dietrich""")
-	
-
-	def getOptions(self, configFile):
-		'''
-		Get the config file options
-		'''
-		self.clear()	
-		print('Please select an option')
-
-	def help(self):
-		'''
-		Display help menu
-		'''
-		self.clear()
-		print("Help Menu")
-
-	def show(self, info):
-		'''
-		Show info about the display
-		'''
-		print(info)
-	
-	def error(self, error):
-		'''
-		Print errors via the display
-		'''
-		print(error)
+Lopi                                               Dietrich
+	A COM Scriptlet Payload Generation Tool"""
 
 	def clear(self):
+		if(os.name == 'nt'):
+			self.clearSc = 'cls'
+		else:
+			self.clearSc = 'clear'
 		'''
 		Clear the display
 		'''
 		os.system(self.clearSc)
+
+	def do_EOF(self, line):
+		'''
+		Control + D aka EOF exits cleanly
+		'''
+		return True
+
+	def do_configs(self, line):
+		configs = getAvailableConfigs()
+		for i in configs:
+			print(i.strip('.cfg'))
+
+	def do_generate(self, line):
+		if type(line) == type(''):
+			config = ConfigParser()
+			config.read('./config/{0}.cfg'.format(line))
+			framework = getFramework(config)
+			shellcode = getShellCode(config)
+			stagingMethod = getStagingMethod(config)
+			redirector = getRedirector(config)
+			x86process = getX86Process(config)
+			x64process = getX64Process(config)
+
+			print(framework, shellcode, stagingMethod, redirector, x86process, x64process)
+
+			genSCT(framework, stagingMethod, redirector, x86process, x64process)

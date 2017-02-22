@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 import fileinput
+from os import listdir
+
 '''
 This module is used for file operations.
 '''
@@ -13,20 +15,16 @@ def fileFindReplace(filename, find, replace):
 		print(line)
 
 def parse(config):
-	for i in config:
-		print(config[i]);
-		if 'default' in config[i]:
-			method = config[i]['default'];
-			print('Default method: {0}'.format(method));
-			if method in config[i]:
-				value = config[i][method];
-				print("Method allowed and has a default value of:\n\t{0}".format(value));
-			elif 'allowWilds' in config[i]:	
-				value = config[i]['default'];
-				print("Method allows wildcards, current value is:\n\t{0}".format(value));
-			else:
-				print("Default method set to {0}, but supported methods are:\n\t{1}".format(method, list(config[i])));
-		input();
+	'''
+	Function to dynamically parse configparser.ConfigParser object
+	'''
+	for section_name in config:
+	    print('Section:', section_name)
+	    section = config[section_name]
+	    print('  Options:', list(section.keys()))
+	    for name in section:
+	        print('  {} = {}'.format(name, section[name]))
+	    print()
 
 def getFramework(config):
 	'''
@@ -49,8 +47,8 @@ def getShellCode(config):
 
 	Returns a shellcode string
 	'''
-	if config['Shellcode']['shellcode'] is not None:
-		return config['Shellcode']['shellcode']
+	if config['Framework']['shellcode'] is not None:
+		return config['Framework']['shellcode']
 
 def getStagingMethod(config):
 	'''
@@ -76,8 +74,8 @@ def getRedirector(config):
 
 	Returns a list of ip address and port
 	'''
-	if config['Redirector']['ip'] is not None and config['Redirector']['port'] is not None:
-		return config['Redirector']['ip'], config['Redirector']['port']
+	if config['RedirectorDomain']['ip'] is not None and config['RedirectorDomain']['port'] is not None:
+		return config['RedirectorDomain']['ip'], config['RedirectorDomain']['port']
 
 def getX86Process(config):
 	'''
@@ -85,8 +83,8 @@ def getX86Process(config):
 
 	Returns x86 process string
 	'''
-	if config['Process']['x86'] is not None:
-		return config['Process']['x86']
+	if config['ProcessInjection']['x86'] is not None:
+		return config['ProcessInjection']['x86']
 
 def getX64Process(config):
 	'''
@@ -94,15 +92,20 @@ def getX64Process(config):
 
 	Returns x64 process string
 	'''
-	if config['Process']['x64'] is not None:
-		return config['Process']['x64']
+	if config['ProcessInjection']['x64'] is not None:
+		return config['ProcessInjection']['x64']
 
-def getSSLCache(config):
+def getAvailableConfigs():
 	'''
-	Gets the SSLCache from the config file.
+	Gets all of the available cfg files in ./config
 
-	returns SSLCache string
+	Returns a list of the config files.
 	'''
-	if config['SSLCache']['SSL'] is not None:
-		return config['SSLCache']['SSL']
 
+	configs = []
+
+	for file in listdir("./config"):
+		if file.endswith(".cfg"):
+			configs.append(file)
+
+	return configs

