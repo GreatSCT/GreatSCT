@@ -8,8 +8,14 @@ def encodeStringAsChr(shellCode):
 	Returns a encoded string
 	'''
 	encoded_string = ''
+	i = 0
 	for code in shellCode:
-		encoded_string += 'Chr(' + str(ord(code)) + ')&'
+		i += 1
+		print(i, len(shellCode))
+		if len(shellCode) == i:
+			encoded_string += 'Chr(' + str(ord(code)) + ')'
+		else:
+			encoded_string += 'Chr(' + str(ord(code)) + ')&'
 
 	return encoded_string
 
@@ -31,12 +37,12 @@ def convertToVBAFormat(intext):
 		if x == len(chars):
 			cont = False
 			chunks.append(''.join(temp))
-		elif x % 254 == 0 and x > 1:
+		elif x % 256 == 0 and x > 1:
 			while chars[x] != '&':
 				temp.append(chars[x])
 				x += 1
 			temp.append(chars[x])
-			temp.append(' _')
+			temp.append(' _\n')
 			x += 1
 			chunks.append(''.join(temp))
 			temp = []
