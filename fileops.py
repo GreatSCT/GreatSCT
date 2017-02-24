@@ -106,6 +106,12 @@ def getAvailableConfigs():
 
 	for file in listdir("./config"):
 		if file.endswith(".cfg"):
-			configs.append(file)
+			configs.append(file.strip('.cfg'))
 
 	return configs
+
+def getFileStringLineNum(find):
+	with open('payload.sct', 'r') as payloadFile:
+		for num, line in enumerate(payloadFile, 1):
+			if find in line:
+				return num

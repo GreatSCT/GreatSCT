@@ -11,7 +11,6 @@ def encodeStringAsChr(shellCode):
 	i = 0
 	for code in shellCode:
 		i += 1
-		print(i, len(shellCode))
 		if len(shellCode) == i:
 			encoded_string += 'Chr(' + str(ord(code)) + ')'
 		else:

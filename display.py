@@ -79,13 +79,13 @@ Lopi                                               Dietrich
 		'''Displays all the available configuration files from config directory'''
 		configs = getAvailableConfigs()
 		for i in configs:
-			print(i.strip('.cfg'))
+			print(i)
 
-	def do_generate(self, line):
+	def do_generate(self, text):
 		'''Generates a payload from a configuration file. i.e. generate default'''
-		if type(line) == type(''):
+		if text:
 			config = ConfigParser()
-			config.read('./config/{0}.cfg'.format(line))
+			config.read('./config/{0}.cfg'.format(text))
 			framework = getFramework(config)
 			shellcode = getShellCode(config)
 			stagingMethod = getStagingMethod(config)
@@ -94,3 +94,27 @@ Lopi                                               Dietrich
 			x64process = getX64Process(config)
 
 			genSCT(framework, stagingMethod, redirector, x86process, x64process)
+			print('Generated a Great SCT payload named payload.sct from {0} config.'.format(text))
+		else:
+			config = ConfigParser()
+			config.read('./config/default.cfg')
+			framework = getFramework(config)
+			shellcode = getShellCode(config)
+			stagingMethod = getStagingMethod(config)
+			redirector = getRedirector(config)
+			x86process = getX86Process(config)
+			x64process = getX64Process(config)
+
+			genSCT(framework, stagingMethod, redirector, x86process, x64process)
+			print('Generated a Great SCT payload named payload.sct from default config.'.format(text))
+
+	def complete_generate(self, text, line, begidx, endidx):
+		if not text:
+			completions = getAvailableConfigs()
+		else:
+			completions = [
+				f
+				for f in getAvailableConfigs()
+				if f.startswith(text)
+			]
+		return completions
