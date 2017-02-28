@@ -58,13 +58,13 @@ Lopi                                               Dietrich
 	A COM Scriptlet Payload Generation Tool"""
 
 	def clear(self):
+		'''
+		Clear the display
+		'''
 		if(os.name == 'nt'):
 			self.clearSc = 'cls'
 		else:
 			self.clearSc = 'clear'
-		'''
-		Clear the display
-		'''
 		os.system(self.clearSc)
 
 	def do_EOF(self, line):
