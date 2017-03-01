@@ -85,6 +85,9 @@ def getVBVariables(file):
 			if 'Dim' in line:
 				var2 = re.search(prog2, line)
 				variables.update({var2.groups()[1]:''.join(random.SystemRandom().choice(string.ascii_lowercase) for _ in range(10))})
+			if 'RegPath' in line:
+				variables.update({'RegPath':''.join(random.SystemRandom().choice(string.ascii_lowercase) for _ in range(10))})
+
 	return variables
 
 def obfuscateVBFunctions(file):
