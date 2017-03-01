@@ -13,6 +13,9 @@ This module is used for displaying information and interactive cli.
 class Display(cmd.Cmd):
 	'''
 	Initialize the object to clear the screen
+
+	Args:
+		cmd.Cmd (object): a cmd.Cmd module object
 	'''
 	prompt = '(Great SCT) '
 	intro = """                     ______,------'--"-.
@@ -59,7 +62,10 @@ Lopi                                               Dietrich
 
 	def clear(self):
 		'''
-		Clear the display
+		Clears the display
+
+		Args:
+			self (object): the cmd.Cmd module object
 		'''
 		if(os.name == 'nt'):
 			self.clearSc = 'cls'
@@ -68,21 +74,52 @@ Lopi                                               Dietrich
 		os.system(self.clearSc)
 
 	def do_EOF(self, line):
-		'''Control + D aka EOF exits cleanly'''
+		'''
+		Control + D aka EOF exits cleanly
+
+		Args:
+			self (object): the cmd.Cmd module object
+			line (string): user input
+		Returns:
+			True (boolean)
+		'''
 		return True
 
 	def do_exit(self, line):
-		'''Type 'exit' to quit Great SCT'''
+		'''
+		Type 'exit' to quit Great SCT
+
+		Args:
+			self (object): the cmd.Cmd module object
+			line (string): user input
+		Returns:
+			True (boolean)
+		'''
 		return True
 
 	def do_configs(self, line):
-		'''Displays all the available configuration files from config directory'''
+		'''
+		Displays all the available configuration files from config directory
+
+
+		Args:
+			self (object): the cmd.Cmd module object
+			line (string): user input
+		'''
+
 		configs = getAvailableConfigs()
 		for i in configs:
 			print(i)
 
 	def do_generate(self, text):
-		'''Generates a payload from a configuration file. i.e. generate default'''
+		'''
+		Generates a payload from a configuration file. i.e. generate default
+
+
+		Args:
+			self (object): the cmd.Cmd module object
+			text (string): user input
+		'''
 		if text:
 			config = ConfigParser()
 			config.read('./config/{0}.cfg'.format(text))
@@ -109,6 +146,20 @@ Lopi                                               Dietrich
 			print('Generated a Great SCT payload named payload.sct from default config.'.format(text))
 
 	def complete_generate(self, text, line, begidx, endidx):
+		'''
+		Generates tab completion from available config files
+
+
+		Args:
+			self (object): the cmd.Cmd module object
+			text (string): user input
+			line (string): next line
+			begidx (int): beginning of index
+			endidx (int) end of index
+
+		Returns:
+			completions (list): list of string completions
+		'''
 		if not text:
 			completions = getAvailableConfigs()
 		else:

@@ -5,10 +5,13 @@ import string
 from fileops import fileFindReplace
 
 def encodeStringAsChr(shellCode):
-	''' 
-	Converts a string to VBA Chr() Encoding.
+	'''
+	Converts a string to VBA Chr() Encoded string array.
 
-	Returns a encoded string
+	Args:
+		shellCode (string): the string to encode
+	Returns:
+		encoded_string (str): a Chr() encoded string
 	'''
 	encoded_string = ''
 	i = 0
@@ -25,7 +28,10 @@ def convertToVBAFormat(intext):
 	'''
 	Converts a Chr() Encoded string into a VBA Array
 	
-	Returns list of strings
+	Args:
+		intext (string): the string to convert to VBA Array Format
+	Returns:
+		chunks (list): list of VBA Array formatted strings
 	'''
 	chars = list(str(intext))
 
@@ -55,6 +61,14 @@ def convertToVBAFormat(intext):
 	return chunks
 
 def getVBFunctions(file):
+	'''
+	Gets the VB functions from a file and obfuscate with random lowercase strings
+
+	Args:
+		file (string): name of the file
+	Returns:
+		functions (dictionary): the dictionary of VB functions
+	'''
 	functions = {}
 	prog = re.compile(r'(function (\w+))', re.IGNORECASE)
 	with open(file, 'r') as file:
@@ -73,6 +87,14 @@ def getVBFunctions(file):
 	return functions
 
 def getVBVariables(file):
+	'''
+	Gets the VB variables from a file and obfuscate with random lowercase strings
+
+	Args:
+		file (string): name of the file
+	Returns:
+		variables (dictionary): the dictionary of VB variables
+	'''
 	variables = {}
 	prog = re.compile(r'(Set (\w+))')
 	prog2 = re.compile(r'(Dim (\w+))')
@@ -91,12 +113,24 @@ def getVBVariables(file):
 	return variables
 
 def obfuscateVBFunctions(file):
+	'''
+	Obfuscates VB functions as random strings in a file
+
+	Args:
+		file (string): name of the file
+	'''
 	functions = getVBFunctions(file)
 
 	for key, value in functions.items():
 		fileFindReplace(file, key, value)
 
 def obfuscateVBVariables(file):
+	'''
+	Obfuscates VB variables as random strings in a file
+
+	Args:
+		file (string): name of the file
+	'''
 	variables = getVBVariables(file)
 
 	for key, value in variables.items():

