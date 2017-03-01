@@ -3,7 +3,6 @@
 	<registration progid="exampleprogid" classid="{exampleclassid}" >
 	<script language="vbscript">
 		<![CDATA[
-			Dim objExcel, WshShell, RegPath, action, objWorkbook, xlmodule
 
 	Set objExcel = CreateObject("Excel.Application")
 	objExcel.Visible = False

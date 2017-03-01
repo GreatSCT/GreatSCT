@@ -1,5 +1,8 @@
 #!/usr/bin/env python
 import re
+import random
+import string
+from fileops import fileFindReplace
 
 def encodeStringAsChr(shellCode):
 	''' 
@@ -50,3 +53,46 @@ def convertToVBAFormat(intext):
 			x += 1
 
 	return chunks
+
+def getVBFunctions(file):
+	functions = {}
+	prog = re.compile(r'(function (\w+))', re.IGNORECASE)
+	with open(file, 'r') as file:
+		for line in file:
+			if 'Function'in line:
+				func = re.search(prog, line)
+				if func:
+					functions.update({func.groups()[1]:''.join(random.SystemRandom().choice(string.ascii_lowercase) for _ in range(10))})
+			elif 'function' in line:
+				func = re.search(prog, line)
+				if func:
+					functions.update({func.groups()[1]:''.join(random.SystemRandom().choice(string.ascii_lowercase) for _ in range(10))})
+			else:
+				pass
+
+	return functions
+
+def getVBVariables(file):
+	variables = {}
+	prog = re.compile(r'(Set (\w+))')
+
+	with open(file, 'r') as file:
+		for line in file:
+			if 'Set' in line:
+				var = re.search(prog, line)
+				variables.update({var.groups()[1]:''.join(random.SystemRandom().choice(string.ascii_lowercase) for _ in range(10))})
+
+	return variables
+
+def obfuscateVBFunctions(file):
+	functions = getVBFunctions(file)
+
+	for key, value in functions.items():
+		fileFindReplace(file, key, value)
+
+def obfuscateVBVariables(file):
+	variables = getVBVariables(file)
+
+	for key, value in variables.items():
+		fileFindReplace(file, key, value)
+

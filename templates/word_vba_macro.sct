@@ -3,7 +3,6 @@
 	<registration progid="exampleprogid" classid="{exampleclassid}" >
 	<script language="vbscript">
 		<![CDATA[
-			Dim objWord, WshShell, RegPath, action, objDoc, wdmodule
 
 	Set objWord = CreateObject("Word.Application")
 	objWord.Visible = False
