@@ -75,13 +75,16 @@ def getVBFunctions(file):
 def getVBVariables(file):
 	variables = {}
 	prog = re.compile(r'(Set (\w+))')
+	prog2 = re.compile(r'(Dim (\w+))')
 
 	with open(file, 'r') as file:
 		for line in file:
 			if 'Set' in line:
 				var = re.search(prog, line)
 				variables.update({var.groups()[1]:''.join(random.SystemRandom().choice(string.ascii_lowercase) for _ in range(10))})
-
+			if 'Dim' in line:
+				var2 = re.search(prog2, line)
+				variables.update({var2.groups()[1]:''.join(random.SystemRandom().choice(string.ascii_lowercase) for _ in range(10))})
 	return variables
 
 def obfuscateVBFunctions(file):
