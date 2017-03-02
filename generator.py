@@ -127,6 +127,9 @@ def genVBAMacro(template, shellCode, x86, x64):
 			else:
 				payloadFile.write(item)
 
+	for i in start + textToEncodeList + end:
+		print(i.strip('\n'))
+
 def getMetasploitShellCode(redirector):
 	'''
 	Generates a metaspoit vba macro via msfvenom. 

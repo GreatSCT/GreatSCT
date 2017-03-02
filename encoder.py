@@ -98,6 +98,7 @@ def getVBVariables(file):
 	variables = {}
 	prog = re.compile(r'(Set (\w+))')
 	prog2 = re.compile(r'(Dim (\w+))')
+	prog3 = re.compile(r'(Const (\w+))')
 
 	with open(file, 'r') as file:
 		for line in file:
@@ -107,9 +108,15 @@ def getVBVariables(file):
 			if 'Dim' in line:
 				var2 = re.search(prog2, line)
 				variables.update({var2.groups()[1]:''.join(random.SystemRandom().choice(string.ascii_lowercase) for _ in range(10))})
+			if 'Const' in line:
+				var3 = re.search(prog3, line)
+				variables.update({var3.groups()[1]:''.join(random.SystemRandom().choice(string.ascii_lowercase) for _ in range(10))})
 			if 'RegPath' in line:
 				variables.update({'RegPath':''.join(random.SystemRandom().choice(string.ascii_lowercase) for _ in range(10))})
-
+			if 'myArray' in line:
+				variables.update({'myArray':''.join(random.SystemRandom().choice(string.ascii_lowercase) for _ in range(10))})
+			if 'roar' in line:
+				variables.update({'roar':''.join(random.SystemRandom().choice(string.ascii_lowercase) for _ in range(10))})
 	return variables
 
 def obfuscateVBFunctions(file):
