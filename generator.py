@@ -148,6 +148,12 @@ def getMetasploitShellCode(redirector):
 		print('[-] ERROR: msfvenom is not installed on the system. Please install msfvenom to use Great SCT.')
 		exit()
 def generateMetasploitReourceFile(redirector):
+	'''
+	Generates a metasploit resource file to use with msfconsole
+
+	Args:
+		redirector (list): ip and port
+	'''
 	msfrc = '''load auto_add_route
 load alias
 alias del rm
