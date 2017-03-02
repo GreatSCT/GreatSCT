@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 import fileinput
 from os import listdir
+import itertools
+import configparser
 
 '''
 This module is used for file operations.
@@ -43,16 +45,22 @@ def getFramework(config):
 	Returns:
 		config (string): the Framework config value
 	'''
-	if 'CobaltStrike' in config['Framework']['framework']:
-		return config['Framework']['framework']
-	elif 'Metasploit' in config['Framework']['framework']:
-		return config['Framework']['framework']
-	elif 'Empire' in config['Framework']['framework']:
-		return config['Framework']['framework']
-	else:
-		print('Invalid configuration option for framework. \
-			Please provide a valid framework, \
-			i.e. CobaltStrike, Metasploit, Empire')
+	try:
+		if config.has_option('Framework', 'framework'):
+			print('here', config.get('Framework', 'framework'))
+			if 'CobaltStrike' in config.get('Framework', 'framework'):
+				return config.get('Framework', 'framework')
+			elif 'Metasploit' in config.get('Framework', 'framework'):
+				return config.get('Framework', 'framework')
+			elif 'Empire' in config.get('Framework', 'framework'):
+				return config.get('Framework', 'framework')
+			else:
+				print('Invalid configuration option for framework. \
+					Please provide a valid framework, \
+					i.e. CobaltStrike, Metasploit, Empire')
+	except configparser.NoOptionError:
+		print('Not a valid option')
+
 
 def getShellCode(config):
 	'''
@@ -63,8 +71,11 @@ def getShellCode(config):
 	Returns:
 		config (string): the shellcode config value
 	'''
-	if config['Framework']['shellcode'] is not None:
-		return config['Framework']['shellcode']
+	try:
+		if config.get('Framework', 'shellcode'):
+			return config.get('Framework', 'shellcode')
+	except configparser.NoSectionError:
+		print('Not a valid option')
 
 def getStagingMethod(config):
 	'''
@@ -75,17 +86,20 @@ def getStagingMethod(config):
 	Returns:
 		config (string): the StagingMethod config value
 	'''
-	if 'regsvr32' in config['StagingMethod']['method']:
-		return config['StagingMethod']['regsvr32']
-	elif 'VBGetObject' in config['StagingMethod']['method']:
-		return config['StagingMethod']['VBGetObject']
-	elif 'VBAMacro' in config['StagingMethod']['method']:
-		return config['StagingMethod']['VBAMacro']
-	elif 'DLLInject' in config['StagingMethod']['method']:
-		return config['StagingMethod']['DLLInject']
-	else:
-		print('[StagingMethod] --> method must be one of the \
-			following options: regsvr32, VBGetObject, VBAMacro, DLLInject')
+	try:
+		if 'regsvr32' in config.get('StagingMethod', 'method'):
+			return config.get('StagingMethod', 'regsvr32')
+		elif 'VBGetObject' in config.get('StagingMethod', 'method'):
+			return config.get('StagingMethod', 'VBGetObject')
+		elif 'VBAMacro' in config.get('StagingMethod', 'method'):
+			return config.get('StagingMethod', 'VBAMacro')
+		elif 'DLLInject' in config.get('StagingMethod', 'method'):
+			return config.get('StagingMethod', 'DLLInject')
+		else:
+			print('[StagingMethod] --> method must be one of the \
+				following options: regsvr32, VBGetObject, VBAMacro, DLLInject')
+	except configparser.NoSectionError:
+		print('Not a valid option')
 
 def getRedirector(config):
 	'''
@@ -96,8 +110,11 @@ def getRedirector(config):
 	Returns:
 		config (list): ip address and port strings
 	'''
-	if config['RedirectorDomain']['ip'] is not None and config['RedirectorDomain']['port'] is not None:
-		return config['RedirectorDomain']['ip'], config['RedirectorDomain']['port']
+	try:
+		if config.get('RedirectorDomain', 'ip') and config.get('RedirectorDomain', 'port'):
+			return config.get('RedirectorDomain', 'ip'), config.get('RedirectorDomain', 'port')
+	except configparser.NoSectionError:
+		print('Not a valid option')
 
 def getX86Process(config):
 	'''
@@ -108,8 +125,11 @@ def getX86Process(config):
 	Returns:
 		config (string): the ProcessInjection x86 config value
 	'''
-	if config['ProcessInjection']['x86'] is not None:
-		return config['ProcessInjection']['x86']
+	try:
+		if config.get('ProcessInjection', 'x86'):
+			return config.get('ProcessInjection', 'x86')
+	except configparser.NoSectionError:
+		print('Not a valid option')
 
 def getX64Process(config):
 	'''
@@ -120,8 +140,11 @@ def getX64Process(config):
 	Returns:
 		config (string): the ProcessInjection x64 config value
 	'''
-	if config['ProcessInjection']['x64'] is not None:
-		return config['ProcessInjection']['x64']
+	try:
+		if config.get('ProcessInjection', 'x64'):
+			return config.get('ProcessInjection', 'x64')
+	except configparser.NoSectionError:
+		print('Not a valid option')
 
 def getAvailableConfigs():
 	'''
@@ -150,3 +173,21 @@ def getFileStringLineNum(find):
 		for num, line in enumerate(payloadFile, 1):
 			if find in line:
 				return num
+
+def getFileSectionByLineNum(file, begidx, endidx):
+	'''
+	Gets a section or chunk of a file based on line numbers
+
+	Args:
+		file (string): name of the file
+		begidx (int): line number
+		endidx (int): line number
+	Returns:
+		values (list): returns a list of the file section's strings
+	'''
+	with open(file, 'r') as payloadFile:
+		values = []
+		for line in itertools.islice(payloadFile, begidx, endidx):
+			values.append(line)
+
+	return values
