@@ -68,7 +68,7 @@
 	end function
 
 	' Get the old AccessVBOM value
-	RegPath = Base64Decode("SEtFWV9DVVJSRU5UX1VTRVJcU29mdHdhcmVcTWljcm9zb2Z0XE9mZmljZQ==") & objExcel.Version & Base64Decode("XEV4Y2VsXFNlY3VyaXR5XEFjY2Vzc1ZCT00=")
+	RegPath = Base64Decode("SEtFWV9DVVJSRU5UX1VTRVJcU29mdHdhcmVcTWljcm9zb2Z0XE9mZmljZVw=") & objExcel.Version & Base64Decode("XEV4Y2VsXFNlY3VyaXR5XEFjY2Vzc1ZCT00=")
 
 	if RegExists(RegPath) then
 		action = WshShell.RegRead(RegPath)
