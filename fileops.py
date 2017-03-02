@@ -44,10 +44,11 @@ def getFramework(config):
 		config (object): configparser.ConfigParser object
 	Returns:
 		config (string): the Framework config value
+	Raises:
+		configparser.NoOptionError: config option doesn't exist
 	'''
 	try:
 		if config.has_option('Framework', 'framework'):
-			print('here', config.get('Framework', 'framework'))
 			if 'CobaltStrike' in config.get('Framework', 'framework'):
 				return config.get('Framework', 'framework')
 			elif 'Metasploit' in config.get('Framework', 'framework'):
@@ -70,6 +71,8 @@ def getShellCode(config):
 		config (object): configparser.ConfigParser object
 	Returns:
 		config (string): the shellcode config value
+	Raises:
+		configparser.NoSectionError: config section doesn't exist
 	'''
 	try:
 		if config.get('Framework', 'shellcode'):
@@ -85,6 +88,8 @@ def getStagingMethod(config):
 		config (object): configparser.ConfigParser object
 	Returns:
 		config (string): the StagingMethod config value
+	Raises:
+		configparser.NoSectionError: config section doesn't exist
 	'''
 	try:
 		if 'regsvr32' in config.get('StagingMethod', 'method'):
@@ -109,6 +114,8 @@ def getRedirector(config):
 		config (object): configparser.ConfigParser object
 	Returns:
 		config (list): ip address and port strings
+	Raises:
+		configparser.NoSectionError: config section doesn't exist
 	'''
 	try:
 		if config.get('RedirectorDomain', 'ip') and config.get('RedirectorDomain', 'port'):
@@ -124,6 +131,8 @@ def getX86Process(config):
 		config (object): configparser.ConfigParser object
 	Returns:
 		config (string): the ProcessInjection x86 config value
+	Raises:
+		configparser.NoSectionError: config section doesn't exist
 	'''
 	try:
 		if config.get('ProcessInjection', 'x86'):
@@ -139,6 +148,8 @@ def getX64Process(config):
 		config (object): configparser.ConfigParser object
 	Returns:
 		config (string): the ProcessInjection x64 config value
+	Raises:
+		configparser.NoSectionError: config section doesn't exist
 	'''
 	try:
 		if config.get('ProcessInjection', 'x64'):
