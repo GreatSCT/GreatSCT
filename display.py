@@ -130,8 +130,6 @@ Lopi                                               Dietrich
 			x86process = getX86Process(config)
 			x64process = getX64Process(config)
 
-			print(framework, shellcode, stagingMethod, redirector, x86process, x64process)
-
 			genSCT(framework, stagingMethod, redirector, x86process, x64process)
 			print('Generated a Great SCT payload named payload.sct from {0} config.'.format(text))
 		else:
@@ -170,4 +168,6 @@ Lopi                                               Dietrich
 				for f in getAvailableConfigs()
 				if f.startswith(text)
 			]
+
 		return completions
+	
