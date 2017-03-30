@@ -9,7 +9,7 @@ def invokeObfuscation(scriptString):
 	# Add letters a-z with random case to $RandomDelimiters.
 	alphabet = ''.join(choice([i.upper(), i]) for i in ascii_lowercase)
 
-	# Create list of random delimiters called randomDelimiters.
+	# Create list of random dxelimiters called randomDelimiters.
 	# Avoid using . * ' " [ ] ( ) etc. as delimiters as these will cause problems in the -Split command syntax.
 	randomDelimiters = ['_','-',',','{','}','~','!','@','%','&','<','>',';',':']
 
@@ -61,7 +61,7 @@ def invokeObfuscation(scriptString):
 		encodedArray += str(ord(char)) + choice(['', ' ']) + ',' + choice(['', ' '])
 
 	# Remove trailing comma from encodedArray
-	encodedArray = '(' + choice(['', ' ']) + encodedArray[:-2] + ')'
+	encodedArray = '(' + choice(['', ' ']) + encodedArray.rstrip().rstrip(',') + ')'
 
 	# Generate random syntax to create/set OFS variable ($OFS is the Output Field Separator automatic variable).
 	# Using Set-Item and Set-Variable/SV/SET syntax. Not using New-Item in case OFS variable already exists.
@@ -87,7 +87,6 @@ def invokeObfuscation(scriptString):
 	baseScriptArray.append('(' + choice(['', ' ']) + "'" + delimitedEncodedArray + "'." + split + "(" + choice(['', ' ']) + "'" + randomDelimitersToPrint + "'" + choice(['', ' ']) + ')' + choice(['', ' ']) + '|' + choice(['', ' ']) + forEachObject + choice(['', ' ']) + '{' + choice(['', ' ']) + '(' + choice(['', ' ']) + randomConversionSyntax + ')' + choice(['', ' ']) + '}' + choice(['', ' ']) + ')')
 	baseScriptArray.append('(' + choice(['', ' ']) + "'" + delimitedEncodedArray + "'" + choice(['', ' ']) + randomDelimitersToPrintForDashSplit + choice(['', ' ']) + '|' + choice(['', ' ']) + forEachObject + choice(['', ' ']) + '{' + choice(['', ' ']) + '(' + choice(['', ' ']) + randomConversionSyntax + ')' + choice(['', ' ']) + '}' + choice(['', ' ']) + ')')
 	baseScriptArray.append('(' + choice(['', ' ']) + encodedArray + choice(['', ' ']) + '|' + choice(['', ' ']) + forEachObject + choice(['', ' ']) + '{' + choice(['', ' ']) + '(' + choice(['', ' ']) + randomConversionSyntax + ')' + choice(['', ' ']) + '}' + choice(['', ' ']) + ')')
-
 	# Generate random JOIN syntax for all above options
 	newScriptArray = []
 	newScriptArray.append(choice(baseScriptArray) + choice(['', ' ']) + join + choice(['', ' ']) + "''")
@@ -156,3 +155,9 @@ def invokeObfuscation(scriptString):
 		return "Length"
 	else:
 		return obfuscatedPayload
+
+# if sys.argv[1]:
+# 	scriptString = 'Write-Output THIS_WORKS > C:\\Users\\lopi\\' + sys.argv[1] + '.txt'
+# 	print(invokeObfuscation(scriptString))
+# else:
+# 	pass
