@@ -19,13 +19,15 @@ Or by entering `variable name/#` itself, which gives more hints about the expect
 
 `help` gives more info as well
 
-![](https://raw.githubusercontent.com/GreatSCT/GreatSCT/7c7a7d6e2595e9ca4f9e6c71a5305acfe836cdb6/gsImages/gsHelp.PNG)
+![](https://raw.githubusercontent.com/GreatSCT/GreatSCT/7c7a7d6e2595e9ca4f9e6c71a5305acfe836cdb6/gsImages/gsHelp.PNG)  
+  
+>\n because I hate markdown
 
-Once that's finished `generate` to build your payload.
+Once the correct values have been set `generate` to build your payload.
 
 ![](https://raw.githubusercontent.com/GreatSCT/GreatSCT/7c7a7d6e2595e9ca4f9e6c71a5305acfe836cdb6/gsImages/gsGenerated.PNG)
 
-The payload (shellcode.xml in this case) appears in the root directory. 
+The payload (shellcode.xml in this case) appears in the root directory.  
 The devs should fix this so you can specify an output folder, but they are lazy.
 
 ![](https://raw.githubusercontent.com/GreatSCT/GreatSCT/7c7a7d6e2595e9ca4f9e6c71a5305acfe836cdb6/gsImages/gsOutput.PNG)
