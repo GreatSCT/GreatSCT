@@ -44,7 +44,7 @@ When it's all set `generate` and you'll find your payloads in ./GenerateAll/
 
 ![](https://raw.githubusercontent.com/GreatSCT/GreatSCT/7c7a7d6e2595e9ca4f9e6c71a5305acfe836cdb6/gsImages/gsGenAllGenerate.PNG)
 
-A script to automatically execute each payload is pending (eta 2034).
+A script to automatically execute each payload is pending (eta 2034).  
 For now drop the folder onto the representative box, execute payloads one by one, and note which are blocked, which generate alerts, and which make it through undisturbed.
 
 ___
