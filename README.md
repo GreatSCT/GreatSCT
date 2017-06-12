@@ -1,5 +1,5 @@
 # GreatSCT
-### An Application Whitlisintg Bypass Tool
+### An Application Whitelisting Bypass Tool
 
 ```python3 gr8sct.py```
 
