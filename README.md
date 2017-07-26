@@ -46,8 +46,3 @@ When it's all set `generate` and you'll find your payloads in ./GenerateAll/
 
 A script to automatically execute each payload is pending (eta 2034).  
 For now drop the folder onto the representative box, execute payloads one by one, and note which are blocked, which generate alerts, and which make it through undisturbed.
-
-___
-
->Always remember, if you see penises, you're doing something right.  
->Don't be a dumbass
