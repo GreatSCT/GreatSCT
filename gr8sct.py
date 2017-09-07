@@ -416,7 +416,7 @@ class GenerationPrompt(State):
 			i = i+1
 
 		t1.join()
-		display.prompt("{0}Generating: 8{1}D{2}\n".format(display.GREEN, '='*i, display.ENDC))
+		display.prompt("{0}Generating: ||{1}||{2}\n".format(display.GREEN, '='*i, display.ENDC))
 
 		info = config["Type"]["runInfo"]
 		display.prompt("{0}Execute with: {1}".format(display.GREEN, display.ENDC), '')

