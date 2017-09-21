@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 from display import *
 from fileOps import *
 from completer import *
@@ -373,7 +374,7 @@ class OptionEdit(State):
 				if param != self.validParams[-1]:
 					outstring = outstring + ', '
 
-			outstring = outstring + "]): "			
+			outstring = outstring + "]): "
 
 			self.suppliedVal = input(outstring)
 
@@ -405,7 +406,6 @@ class GenerationPrompt(State):
 	def run(self):
 		config = fileOps.getCurrentConfig()
 		t1 = threading.Thread(target = fileOps.generate, args = [config])
-
 		t1.start()
 
 		i = 1

