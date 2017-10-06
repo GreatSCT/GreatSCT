@@ -337,7 +337,6 @@ class ConfigEdit(State):
 			section = config[section_name]
 			if section_name == "Type":
 				display.prompt("Selected Payload: {0}\n".format(section["info"]))
-
 			else:
 				numTabs = 1
 				if len(section_name) < 12: numTabs = 2

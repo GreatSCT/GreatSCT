@@ -81,7 +81,6 @@ class FileOps():
 		
 		for template_section in template:
 			section = template[template_section]
-
 			if template_section == "ShellCodex64":
 				extraProcessing = None
 				try:
@@ -89,8 +88,13 @@ class FileOps():
 				except KeyError:
 					extraProcessing = None
 
-				shellcodex64 = generator.genShellcode(domain, port, "x64", extraProcessing)
-				section["value"] = shellcodex64
+				if framework == "CobaltStrike":
+					shellcodex64 = generator.encodeShellcode(section["value"], extraProcessing)
+					section["value"] = shellcodex64
+				else:
+					# Metasploit 64 bit shellcode generation
+					shellcodex64 = generator.genShellcode(domain, port, "x64", extraProcessing)
+					section["value"] = shellcodex64
 			
 			elif template_section == "ShellCodex86" or template_section == "ShellCode":
 				extraProcessing = None
@@ -99,8 +103,14 @@ class FileOps():
 				except KeyError:
 					extraProcessing = None
 
-				shellcodex86 = generator.genShellcode(domain, port, "x86", extraProcessing)
-				section["value"] = shellcodex86
+				if framework == "CobaltStrike":
+					# shellcodex86 = input('Paste your CobaltStrike shellcode')
+					# section["value"] = shellcodex86
+					shellcodex86 = generator.encodeShellcode(section["value"], extraProcessing)
+					section["value"] = str(shellcodex86)
+				else:
+					shellcodex86 = generator.genShellcode(domain, port, "x86", extraProcessing)
+					section["value"] = shellcodex86
 
 			elif template_section == "Processing":
 				try:
@@ -149,5 +159,3 @@ class FileOps():
 			newText = newText[0:-5]
 					
 		return(newText)
-
-

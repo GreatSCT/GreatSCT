@@ -42,7 +42,17 @@ class Generator():
 
 		return shellcode
 
+	def encodeShellcode(self, shellcode, shellProcess):
+		if shellProcess == 'hexEncode':
+			shellcode = self.hexEncode(shellcode)
+		elif shellProcess == 'decEncode':
+			shellcode = self.decEncode(shellcode)
+		elif shellProcess == 'b64Encode':
+			shellcode = self.b64Encode(shellcode)
+		elif shellProcess == 'pshEncode':
+			shellcode = self.pshEncode(shellcode)
 
+		return shellcode
 
 	def hexEncode(self, shellcode):
 		#currently used to format mshta based payloads
@@ -78,7 +88,7 @@ class Generator():
 				else:
 					shellcode = shellcode[:i]+" _\r\n"+shellcode[i+len(lineEnd):]
 					even = even<<1
-		shellcode = shellcode[:-4]	
+		shellcode = shellcode[:-4]
 			
 		return(shellcode)
 
