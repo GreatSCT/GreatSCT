@@ -420,6 +420,7 @@ class GenerationPrompt(State):
 		display.prompt("{0}Generating: ||{1}||{2}\n".format(display.GREEN, '='*i, display.ENDC))
 
 		info = config["Type"]["runInfo"]
+		name = config["Type"]["name"]
 		try:
 			domain = config["HostedDomain"]["var"]
 			print(domain)
@@ -434,9 +435,11 @@ class GenerationPrompt(State):
 			generator.genRunScript(info)
 		else:
 			generator.genRunScript(info)
+
+		if "allthethings" in name:
+			generator.compileAllTheThings()
 		display.prompt("{0}Execute with: {1}".format(display.GREEN, display.ENDC), '')
 		display.prompt(info, '\n\n')
-		
 
 class Help(State):
 	transMap = {"Help": "Help", "Intro": "Intro", "ConfigEdit": "ConfigEdit", "ConfigAllEdit": "ConfigAllEdit", "GenerationPrompt": "GenerationPrompt"}

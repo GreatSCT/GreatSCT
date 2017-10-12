@@ -47,7 +47,7 @@ class FileOps():
 		return (self.genFromTemplate(template))
 		
 	def genFromTemplate(self, template):
-		processingMap = {"chrEncode": FileOps.genChrArray, "compileATT":FileOps.compileAllTheThings}
+		processingMap = {"chrEncode": FileOps.genChrArray}
 
 
 		framework = ''
@@ -160,19 +160,3 @@ class FileOps():
 			newText = newText[0:-5]
 					
 		return newText
-
-	def compileAllTheThings(text):
-		build_steps = [
-				"apt-get install mono-complete -y",
-				"git clone https://github.com/ConsciousHacker/AllTheThings",
-				"wget https://github.com/mono/nuget-binary/raw/master/nuget.exe",
-				"mono --runtime=v4.0 nuget.exe restore ./AllTheThings/AllTheThings.sln",
-				"mdtool build ./AllTheThings/AllTheThings/AllTheThings.csproj"
-				"cp ./AllTheThings/bin/Debug/AllTheThings.dll ./GenerateAll/AllTheThings.dll"
-				]
-
-		for step in build_steps:
-			os.system(step)
-
-		# this return doesn't reallly do anything
-		return text
