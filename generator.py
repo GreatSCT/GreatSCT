@@ -105,7 +105,7 @@ class Generator():
 			f.write(run_info + '\n')
 			f.write('timeout 30 > NUL\n')
 
-	def compileAllTheThings(name):
+	def compileAllTheThings(self, name):
 		build_steps = [
 				"apt-get install mono-complete -y",
 				"git clone https://github.com/ConsciousHacker/AllTheThings >/dev/null 2>&1",
@@ -113,7 +113,7 @@ class Generator():
 				"cp ./GenerateAll/allthethings.cs ./AllTheThings/AllTheThings/Program.cs >/dev/null 2>&1",
 				"mono --runtime=v4.0 nuget.exe restore ./AllTheThings/AllTheThings.sln >/dev/null 2>&1",
 				"mdtool build ./AllTheThings/AllTheThings/AllTheThings.csproj >/dev/null 2>&1",
-				"cp ./AllTheThings/AllTheThings/bin/Debug/AllTheThings.dll ./GenerateAll/AllTheThings.dll >/dev/null 2>&1"
+				"cp ./AllTheThings/AllTheThings/bin/Debug/AllTheThings.dll ./GenerateAll/AllTheThings_" + name + ".dll >/dev/null 2>&1"
 				]
 
 		for step in build_steps:
