@@ -167,7 +167,7 @@ class FileOps():
 				"git clone https://github.com/ConsciousHacker/AllTheThings",
 				"wget https://github.com/mono/nuget-binary/raw/master/nuget.exe",
 				"mono --runtime=v4.0 nuget.exe restore AllTheThings/AllTheThings.sln",
-				"mdtool build proj.csproj"
+				"mdtool build AllTheThings/AllTheThings/AllTheThings.csproj"
 				"cp ./AllTheThings/bin/Debug/AllTheThings.dll ./GenerateAll/AllTheThings.dll"
 				]
 
