@@ -420,7 +420,9 @@ class GenerationPrompt(State):
 		display.prompt("{0}Generating: ||{1}||{2}\n".format(display.GREEN, '='*i, display.ENDC))
 
 		info = config["Type"]["runInfo"]
+		output = config["Output"]["var"]
 		name = config["Type"]["name"]
+
 		try:
 			domain = config["HostedDomain"]["var"]
 			print(domain)
@@ -436,8 +438,8 @@ class GenerationPrompt(State):
 		else:
 			generator.genRunScript(info)
 
-		if "allthethings" in name:
-			generator.compileAllTheThings()
+		if "allthethings" in output:
+			generator.compileAllTheThings(name)
 		display.prompt("{0}Execute with: {1}".format(display.GREEN, display.ENDC), '')
 		display.prompt(info, '\n\n')
 
