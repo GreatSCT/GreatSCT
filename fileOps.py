@@ -168,7 +168,7 @@ class FileOps():
 				"wget https://github.com/mono/nuget-binary/raw/master/nuget.exe",
 				"mono --runtime=v4.0 nuget.exe restore AllTheThings/AllTheThings.sln",
 				"mdtool build proj.csproj"
-				"cp ./AllTheThings/bin/Debug/AllTheThings.dll /opt/GreatSCT/GenerateAll/AllTheThings.dll"
+				"cp ./AllTheThings/bin/Debug/AllTheThings.dll ./GenerateAll/AllTheThings.dll"
 				]
 
 		for step in build_steps:
