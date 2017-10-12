@@ -2,6 +2,7 @@
 from display import *
 from fileOps import *
 from completer import *
+from generator import *
 
 import readline
 import threading
@@ -12,6 +13,7 @@ configDir = "./config/"
 display = Display()
 fileOps = FileOps(configDir)
 completer = Completer()
+generator = Generator()
 
 class State():
 	prevState = None
@@ -418,6 +420,20 @@ class GenerationPrompt(State):
 		display.prompt("{0}Generating: ||{1}||{2}\n".format(display.GREEN, '='*i, display.ENDC))
 
 		info = config["Type"]["runInfo"]
+		try:
+			domain = config["HostedDomain"]["var"]
+			print(domain)
+		except KeyError:
+			pass
+
+		if 'mshta' in info:
+			info = info.replace('./', domain + '/')
+			generator.genRunScript(info)
+		elif 'regsvr32' in info:
+			info = info.replace('./', domain + '/')
+			generator.genRunScript(info)
+		else:
+			generator.genRunScript(info)
 		display.prompt("{0}Execute with: {1}".format(display.GREEN, display.ENDC), '')
 		display.prompt(info, '\n\n')
 		

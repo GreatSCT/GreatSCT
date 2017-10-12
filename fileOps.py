@@ -47,7 +47,7 @@ class FileOps():
 		return (self.genFromTemplate(template))
 		
 	def genFromTemplate(self, template):
-		processingMap = {"chrEncode": FileOps.genChrArray}
+		processingMap = {"chrEncode": FileOps.genChrArray, "compileATT":FileOps.compileAllTheThings}
 
 
 		framework = ''
@@ -65,6 +65,7 @@ class FileOps():
 
 			if config_section == "Type":
 				runInfo = FileOps.selectedConfig[config_section]["runInfo"]
+				name = FileOps.selectedConfig[config_section]["name"]
 
 			if config_section == "Output":
 				outfile = FileOps.selectedConfig[config_section]["var"]		
@@ -93,7 +94,7 @@ class FileOps():
 					section["value"] = shellcodex64
 				else:
 					# Metasploit 64 bit shellcode generation
-					shellcodex64 = generator.genShellcode(domain, port, "x64", extraProcessing)
+					shellcodex64 = generator.genShellcode(domain, port, "x64", name, extraProcessing)
 					section["value"] = shellcodex64
 			
 			elif template_section == "ShellCodex86" or template_section == "ShellCode":
@@ -109,7 +110,7 @@ class FileOps():
 					shellcodex86 = generator.encodeShellcode(section["value"], extraProcessing)
 					section["value"] = str(shellcodex86)
 				else:
-					shellcodex86 = generator.genShellcode(domain, port, "x86", extraProcessing)
+					shellcodex86 = generator.genShellcode(domain, port, "x86", name, extraProcessing)
 					section["value"] = shellcodex86
 
 			elif template_section == "Processing":
@@ -158,4 +159,20 @@ class FileOps():
 		else:
 			newText = newText[0:-5]
 					
-		return(newText)
+		return newText
+
+	def compileAllTheThings(text):
+		build_steps = [
+				"apt-get install mono-complete -y",
+				"git clone https://github.com/ConsciousHacker/AllTheThings",
+				"wget https://github.com/mono/nuget-binary/raw/master/nuget.exe",
+				"mono --runtime=v4.0 nuget.exe restore AllTheThings/AllTheThings.sln",
+				"mdtool build proj.csproj"
+				"cp ./AllTheThings/bin/Debug/AllTheThings.dll /opt/GreatSCT/GenerateAll/AllTheThings.dll"
+				]
+
+		for step in build_steps:
+			os.system(step)
+
+		# this return doesn't reallly do anything
+		return text

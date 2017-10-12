@@ -10,11 +10,11 @@ value: notSet
 
 [Template]
 data: <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-	  <!-- This inline task executes shellcode. -->
-	  <!-- C:\Windows\Microsoft.NET\Framework\v4.0.30319\msbuild.exe SimpleTasks.csproj -->
-	  <!-- Save This File And Execute The Above Command -->
-	  <!-- Author: Casey Smith, Twitter: @subTee --> 
-	  <!-- License: BSD 3-Clause -->
+         <!-- This inline task executes shellcode. -->
+         <!-- C:\Windows\Microsoft.NET\Framework\v4.0.30319\msbuild.exe SimpleTasks.csproj -->
+         <!-- Save This File And Execute The Above Command -->
+         <!-- Author: Casey Smith, Twitter: @subTee -->
+         <!-- License: BSD 3-Clause -->
 	  <Target Name="Hello">
 	    <ClassExample />
 	  </Target>

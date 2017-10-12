@@ -141,4 +141,3 @@ value: Private Type PROCESS_INFORMATION
 		Auto_Open
 	End Sub
 process: chrEncode
-

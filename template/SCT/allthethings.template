@@ -163,3 +163,7 @@ data:
 	   
 
 	}
+
+[Processing]
+value: This is used to compile AllTheThings into a dll on Linux
+process: compileATT
