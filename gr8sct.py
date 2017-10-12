@@ -440,6 +440,8 @@ class GenerationPrompt(State):
 
 		if "allthethings" in output:
 			generator.compileAllTheThings(name)
+		# It works, but inefficent - fix later
+		generator.genShellScript()
 		display.prompt("{0}Execute with: {1}".format(display.GREEN, display.ENDC), '')
 		display.prompt(info, '\n\n')
 

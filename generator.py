@@ -119,3 +119,8 @@ class Generator():
 
 		for step in build_steps:
 			os.popen(step)
+
+	def genShellScript(self):
+		script = "cd ./GenerateAll/\npython -m SimpleHTTPServer 80"
+		with open('./GenerateAll/gr8sct.sh', 'w+') as f:
+			f.write(script)
