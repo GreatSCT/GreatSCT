@@ -2,7 +2,7 @@ Rundll32.exe
 Regsvr32.exe
 Mshta.exe
 Msbuild.exe
-Cbd.exe
+Cdb.exe
 Csc.exe
 Tracker.exe
 Ntsd.exe
