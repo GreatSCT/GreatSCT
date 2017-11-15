@@ -13,3 +13,5 @@
 - [ ] Make a Wiki
 - [ ] Write a blog post
 - [ ] Add all the bypasses
+- [ ] Finished PEP8 clean up
+- [ ] pydoc comments
