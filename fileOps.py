@@ -36,7 +36,7 @@ class FileOps():
             ip = s.getsockname()[0]
             s.close()
             FileOps.updateCurrentConfig(self, "ListenerDomain", ip)
-            FileOps.updateCurrentConfig(self, "HostedDomain", ip)
+            FileOps.updateCurrentConfig(self, "HostedDomain", "http://" + ip)
         except:
             pass
 
@@ -174,7 +174,7 @@ class FileOps():
 
     def fileCleanUp(self):
         files = ["./GenerateAll/gr8sct.rc", "./GenerateAll/analyst.csv",
-                 "./GenerateAll/gr8sct.sh", "./GenerateAll/gr8sct.bat"]
+                 "./GenerateAll/gr8sct.bat" ]
         for f in files:
             try:
                 os.remove(f)

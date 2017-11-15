@@ -293,6 +293,9 @@ class ConfigAllEdit(State):
         os.system("cp -rf ./GenerateAll /var/www/html/ >/dev/null 2>&1")
         display.prompt("Copying files to Apache's webroot")
         display.prompt("Generated all application whitelist bypasses in GreatSCT. Happy policy testing!")
+        display.prompt("Loading metasploit with \"msfconsole -r ./GenerateAll/gr8sct.rc\"")
+        os.system("msfconsole -r ./GenerateAll/gr8sct.rc")
+
         self.transition("exit")
 
 
@@ -439,6 +442,9 @@ class GenerationPrompt(State):
             generator.genRunScript(info)
         elif 'regsvr32' in info:
             info = info.replace('./', domain + '/')
+            generator.genRunScript(info)
+        elif  name == 'msbuild':
+            info = info.replace('./GenerateAll/shellcode.xml', 'shellcode.xml')
             generator.genRunScript(info)
         else:
             generator.genRunScript(info)
