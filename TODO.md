@@ -3,7 +3,7 @@
 - [x] Create a wiki page with the current status of bypasses in the framework
 - [ ] Fix HTAShellcode payload to include updated versions and add the COM scriptlet
 - [ ] Fix bugs in batch file generation
-- [ ] Automagically grab ip address and set as default ip
+- [x] Automagically grab ip address and set as default ip
 - [ ] Redo shell script / Run the os commands
 - [x] Dynamic Metasploit payload selection
 - [ ] CobaltStrike Integration with @harleyQu1nn via cortana script

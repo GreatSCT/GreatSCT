@@ -3,31 +3,29 @@ import readline
 
 class Completer(object):
 
-	commands = []
+    commands = []
 
-	def check(self, text, state):
-		"""
-		Description: Tab auto-completion for the main menu
-		Original Source: http://stackoverflow.com/questions/20691102/readline-autocomplete-and-whitespace
-		Modified Author: Hunter Hardman @t3ntman
-		Modifieded Author: Dietrich
-		"""
-       
-		options = [x for x in self.commands if x.startswith(text)]
+    def check(self, text, state):
+        """
+        Description: Tab auto-completion for the main menu
+        Original Source: http://stackoverflow.com/questions/20691102/readline-autocomplete-and-whitespace
+        Modified Author: Hunter Hardman @t3ntman
+        Modifieded Author: Dietrich
+        """
 
-		try:
-			return options[state]
+        options = [x for x in self.commands if x.startswith(text)]
 
-		except IndexError:
-			return None
+        try:
+            return options[state]
 
-	def setCommands(self, commandList):
-		self.commands = commandList
+        except IndexError:
+            return None
 
-	def addCommands(self, commandList):
-		self.commands.append(commandList)
+    def setCommands(self, commandList):
+        self.commands = commandList
 
-	def addCommand(self, command):
-		self.commands.append(command)
+    def addCommands(self, commandList):
+        self.commands.append(commandList)
 
-	
+    def addCommand(self, command):
+        self.commands.append(command)
