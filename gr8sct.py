@@ -427,7 +427,6 @@ class GenerationPrompt(State):
 
 		try:
 			domain = config["HostedDomain"]["var"]
-			print(domain)
 		except KeyError:
 			pass
 

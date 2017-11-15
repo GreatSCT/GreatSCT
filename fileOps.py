@@ -76,7 +76,8 @@ class FileOps():
 				domain = FileOps.selectedConfig[config_section]["var"]
 			elif config_section == "ListenerPort":
 				port = FileOps.selectedConfig[config_section]["var"]
-
+			elif config_section == "Payload":
+				payload = FileOps.selectedConfig[config_section]["var"]
 
 		generator = Generator()
 		
@@ -90,11 +91,11 @@ class FileOps():
 					extraProcessing = None
 
 				if framework == "CobaltStrike":
-					shellcodex64 = generator.encodeShellcode(section["value"], extraProcessing)
+					shellcodex64 = generator.encodeShellcode(section["value"], payload, extraProcessing)
 					section["value"] = shellcodex64
 				else:
 					# Metasploit 64 bit shellcode generation
-					shellcodex64 = generator.genShellcode(domain, port, "x64", name, extraProcessing)
+					shellcodex64 = generator.genShellcode(domain, port, "x64", name, payload, extraProcessing)
 					section["value"] = shellcodex64
 			
 			elif template_section == "ShellCodex86" or template_section == "ShellCode":
@@ -107,10 +108,10 @@ class FileOps():
 				if framework == "CobaltStrike":
 					# shellcodex86 = input('Paste your CobaltStrike shellcode')
 					# section["value"] = shellcodex86
-					shellcodex86 = generator.encodeShellcode(section["value"], extraProcessing)
+					shellcodex86 = generator.encodeShellcode(section["value"], payload, extraProcessing)
 					section["value"] = str(shellcodex86)
 				else:
-					shellcodex86 = generator.genShellcode(domain, port, "x86", name, extraProcessing)
+					shellcodex86 = generator.genShellcode(domain, port, "x86", name, payload, extraProcessing)
 					section["value"] = shellcodex86
 
 			elif template_section == "Processing":
