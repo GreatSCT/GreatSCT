@@ -3,8 +3,13 @@
 - [x] Create a wiki page with the current status of bypasses in the framework
 - [ ] Fix HTAShellcode payload to include updated versions and add the COM scriptlet
 - [ ] Fix bugs in batch file generation
+<<<<<<< HEAD
 - [x] Automagically grab ip address and set as default ip
 - [ ] Redo shell script / Run the os commands
+=======
+- [ ] Automagically grab ip address and set as default ip
+- [ ] GenerateAll: Redo shell script / Run the os commands
+>>>>>>> 996f9a3a4e46546cebf865cc26a999afba3b70c5
 - [x] Dynamic Metasploit payload selection
 - [ ] CobaltStrike Integration with @harleyQu1nn via cortana script
 - [ ] GenerateAll: automatic updating of analyst.csv with metasploit uuid tracking autorun resource script (Resource script): https://gist.github.com/ConsciousHacker/0870e4805a59ccfeface1481c48d4af9
