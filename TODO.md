@@ -1,7 +1,7 @@
 # TODO
 - [x] Create list of all application white list bypasses available
 - [x] Create a wiki page with the current status of bypasses in the framework
-- [ ] Fix HTAShellcode payload to include updated versions and add the COM scriptlet
+- [x] Fix HTAShellcode payload to include updated versions and add the COM scriptlet
 - [x] GenerateAll: Fix bugs in batch file generation
 - [x] Automagically grab ip address and set as default ip
 - [x] GenerateAll: Redo shell script / Run the os commands
