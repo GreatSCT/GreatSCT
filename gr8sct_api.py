@@ -25,9 +25,9 @@ class Config(Resource):
 class Template(Resource):
     def get(self):
         try:
-        configDir = './template/'
-        fileOps = FileOps(configDir)
-        templates = { "templates" : fileOps.getConfigs() }
+            configDir = './template/'
+            fileOps = FileOps(configDir)
+            templates = { "templates" : fileOps.getConfigs() }
 
         except:
             abort(404, message="Config does not exist.")
@@ -43,11 +43,12 @@ class Generate(Resource):
             fileOps.loadConfig(args["config"])
             current = fileOps.getCurrentConfig()
             payload_name = current["Output"]["var"]
+            execution = current["Type"]["runInfo"]
 
             with open(payload_name, 'r') as f:
                 payload = f.read()
 
-            payload = { "payload" : payload }
+            payload = { "payload" : payload, "execution" : execution }
 
         except:
             abort(404, message="Config does not exist.")
