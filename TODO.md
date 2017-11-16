@@ -15,5 +15,5 @@
 - [ ] Add all the bypasses
 - [ ] Finish PEP8 clean up
 - [ ] Write pydoc comments
-- [ ] Take new screenshots for README.md
+- [x] Take new screenshots for README.md
 - [x] Create an API for Marcello
