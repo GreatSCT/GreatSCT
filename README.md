@@ -44,10 +44,10 @@ When it's all set `generate` and you'll find your payloads in ./GenerateAll/
 
 Apache and metasploit will automatically start when the GenerateAll function finishes.
 
-![](https://raw.githubusercontent.com/GreatSCT/GreatSCT/Images/gsImages/gsGenAllDone.PNG)
+![](https://raw.githubusercontent.com/GreatSCT/GreatSCT/Images/gsImages/genAllDone.PNG)
 
 A script to automatically execute each payload is located in ./GenerateAll/gr8sct.bat.
 
-![](https://raw.githubusercontent.com/GreatSCT/GreatSCT/Images/gsImages/gsGenAllFolder.PNG)
+![](https://raw.githubusercontent.com/GreatSCT/GreatSCT/Images/gsImages/genAllFolder.PNG)
 
 Download generateall.zip from the HostedDomain, execute gr8sct.bat, and open ./GenerateAll/analyst.csv when the batch script finishes to see which bypasses worked.
