@@ -16,4 +16,4 @@
 - [ ] Finish PEP8 clean up
 - [ ] Write pydoc comments
 - [ ] Take new screenshots for README.md
-- [ ] Create an API for Marcello
+- [x] Create an API for Marcello
