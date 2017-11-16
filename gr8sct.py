@@ -7,6 +7,7 @@ from generator import *
 import readline
 import threading
 import time
+import os
 
 configDir = "./config/"
 
@@ -428,9 +429,15 @@ class GenerationPrompt(State):
         t1.join()
         display.prompt("{0}Generating: ||{1}||{2}\n".format(display.GREEN, '='*i, display.ENDC))
 
-        info = config["Type"]["runInfo"]
-        output = config["Output"]["var"]
-        name = config["Type"]["name"]
+        try:
+            info = config["Type"]["runInfo"]
+            output = config["Output"]["var"]
+            name = config["Type"]["name"]
+            sct = config["Scriptlet"]["var"]
+            hostedsct = config["HostedSct"]["var"]
+        except:
+            pass
+
 
         try:
             domain = config["HostedDomain"]["var"]
@@ -440,6 +447,9 @@ class GenerationPrompt(State):
         if 'mshta' in info:
             info = info.replace('./', domain + '/')
             generator.genRunScript(info)
+            if 'HTA2Shell' in name:
+                os.system('wget -O ./GenerateAll/{0} {1} >/dev/null 2>&1'.format(hostedsct, sct))
+                display.prompt("{0}Downloading COM Scriptlet here:{1} ./GenerateAll/{2}".format(display.GREEN, display.ENDC, hostedsct))
         elif 'regsvr32' in info:
             info = info.replace('./', domain + '/')
             generator.genRunScript(info)

