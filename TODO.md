@@ -18,6 +18,7 @@
 - [x] Take new screenshots for README.md
 - [x] Create an API for Marcello
 # TODO v.1.1
+- [ ] Refactor and clean up framework code
 - [ ] Extend the RESTful API
 - [ ] Implement obfuscation into the framework for SCT payloads
 - [ ] Add all known obfuscation techniques for SCT payloads
