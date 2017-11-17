@@ -31,7 +31,7 @@ The devs should fix this so you can specify an output folder, but they are lazy.
 ![](https://raw.githubusercontent.com/GreatSCT/GreatSCT/Images/gsImages/gsOutput.PNG)
 ___
 
-For network testing purposes use `generateAll` from the inital menu
+For testing the efficacy of an application whitelist policy,  use `generateAll` from the inital menu
 
 ![](https://raw.githubusercontent.com/GreatSCT/GreatSCT/Images/gsImages/gsGenAllSet.PNG)
 
