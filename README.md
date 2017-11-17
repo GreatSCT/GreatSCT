@@ -40,7 +40,7 @@ This lets you easily set your C&C values for all the payloads.
 
 When it's all set `generate` and you'll find your payloads in ./GenerateAll/
 
-![](https://raw.githubusercontent.com/GreatSCT/GreatSCT/Images/gsImages/gsGenAllGenerate.PNG)
+![](https://raw.githubusercontent.com/GreatSCT/GreatSCT/Images/gsImages/genAllGenerate.PNG)
 
 Apache and metasploit will automatically start when the GenerateAll function finishes.
 
