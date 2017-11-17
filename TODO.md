@@ -10,7 +10,7 @@
 - [x] GenerateAll: automatic updating of analyst.csv with metasploit uuid tracking autorun resource script (Resource script): https://gist.github.com/ConsciousHacker/0870e4805a59ccfeface1481c48d4af9
 - [x] GenerateAll: automatically run apache and metasploit
 - [ ] Fix AllTheThings compile error on Linux: /opt/GreatSCT/AllTheThings/packages/UnmanagedExports.1.2.7/tools/RGiesecke.DllExport.targets : error: Error executing task DllExportAppDomainIsolatedTask: The method or operation is not implemented.
-- [ ] Make a Wiki
+- [x] Make a Wiki
 - [ ] Write a blog post
 - [ ] Add all the bypasses
 - [ ] Finish PEP8 clean up
