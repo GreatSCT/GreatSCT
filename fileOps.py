@@ -3,15 +3,34 @@ import socket
 from configparser import ConfigParser, ExtendedInterpolation
 from generator import Generator
 
+"""
+This module is used for file operations.
+"""
+
 
 class FileOps():
+    """
+    This class is used for file operations.
+    """
     configDir = ''
     selectedConfig = None
 
     def __init__(self, configDir):
+        """
+        Initalize the FileOps class
+
+        :params configDir: the config directory
+        :type configDir: string
+        """
         FileOps.configDir = configDir
 
     def getConfigs(self):
+        """
+        Get the configuration files and return them
+
+        :returns: configs
+        :rtype: list
+        """
         fileList = []
 
         # http://stackoverflow.com/questions/16953842/using-os-walk-to-recursively-traverse-directories-in-python
@@ -23,9 +42,23 @@ class FileOps():
         return(fileList)
 
     def getConfigDir(self):
+        """
+        Get the config directory
+
+        :returns: FileOps.configDir
+        :rtype: string
+        """
         return(FileOps.configDir)
 
     def loadConfig(self, configName):
+        """
+        Loads a config file
+
+        :param configName: name of the config file
+        :type configName: string
+        :returns: FileOps.selectedConfig
+        :rtype: ConfigParser.Object
+        """
         FileOps.selectedConfig = ConfigParser(interpolation=ExtendedInterpolation(), comment_prefixes=None)
         FileOps.selectedConfig.optionxform = str  # disable configparser convert data to lowercase
         FileOps.selectedConfig.read("{0}{1}".format(FileOps.configDir, configName))
@@ -43,15 +76,43 @@ class FileOps():
         return(FileOps.selectedConfig)
 
     def setCurrentConfig(self, configObj):
+        """
+        Sets the current config
+
+        :param configObj: config object
+        :type configObj: ConfigParser.Object
+        """
         FileOps.selectedConfig = configObj
 
     def updateCurrentConfig(self, option, value):
+        """
+        Updates the current config
+
+        :param option: config option to update
+        :param value: value to change config option
+        :type option: string
+        :type value: string
+        """
         FileOps.selectedConfig[option]["var"] = value
 
     def getCurrentConfig(self):
+        """
+        Gets the current config
+
+        :returns: FileOps.selectedConfig
+        :rtype: ConfigParser.Object
+        """
         return(FileOps.selectedConfig)
 
     def generate(self, config):
+        """
+        Generates a payload from a config file
+
+        :param config: config file to generate
+        :type config: string
+        :returns: template
+        :rtype: ConfigParser.Object
+        """
         template = ConfigParser(interpolation=ExtendedInterpolation(), comment_prefixes=None)
         template.optionxform = str
         template.read(FileOps.selectedConfig["Type"]["template"])
@@ -59,6 +120,15 @@ class FileOps():
         return (self.genFromTemplate(template))
 
     def genFromTemplate(self, template):
+        """
+        Generates a payload from a template
+
+        :param template: template
+        :type template: string
+        :returns: runInfo
+        :rtype: string
+
+        """
         processingMap = {"chrEncode": FileOps.genChrArray}
 
         framework = ''
@@ -154,6 +224,14 @@ class FileOps():
         return runInfo
 
     def genChrArray(text):
+        """
+        Generate a Chr array for VBScript payloads
+
+        :param text: text to convert to chr array
+        :type text: string
+        :returns: newText
+        :rtype: string
+        """
         i = 0
         newText = ''
         for character in text:
@@ -173,8 +251,11 @@ class FileOps():
         return newText
 
     def fileCleanUp(self):
+        """
+        Cleans up files written to disk
+        """
         files = ["./GenerateAll/gr8sct.rc", "./GenerateAll/analyst.csv",
-                 "./GenerateAll/gr8sct.bat" ]
+                 "./GenerateAll/gr8sct.bat"]
         for f in files:
             try:
                 os.remove(f)

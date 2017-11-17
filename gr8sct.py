@@ -9,6 +9,10 @@ import threading
 import time
 import os
 
+"""
+This module is the main program for GreatSCT.
+"""
+
 configDir = "./config/"
 
 display = Display()
@@ -18,6 +22,8 @@ generator = Generator()
 
 
 class State():
+    """
+    This class is used to maintain state within the GreatSCT program    """
     prevState = None
     currentState = None
     selection = None
@@ -25,6 +31,16 @@ class State():
     transMap = {}
 
     def transition(self, selection, suppliedVal=None):
+        """
+        Transitions from one state to another
+
+        :param selection: user input selection
+        :param suppliedVal: user supplied value
+        :type selection: string
+        :type suppliedVal: string
+        :returns: nextState.().run()
+        :type: method
+        """
 
         try:
             nextState = eval(self.transMap[selection])
@@ -39,15 +55,24 @@ class State():
         return(nextState().run())
 
     def run(self):
+        """
+        Runs the current state.
+        """
         readline.set_completer(completer.check)
         readline.set_completer_delims("")
         readline.parse_and_bind("tab: complete")
 
 
 class Intro(State):
+    """
+    This class is used to introduce users to GreatSCT.
+    """
     transMap = {"help": "Help", "exit": "Exit", "generateAll": "ConfigAllEdit"}
 
     def firstRun(self):
+        """
+        Displays information on the first run.
+        """
         # seed currentState to return here if invalid selection is set, this is
         # auto preformed in transistion() for future states
         self.currentState = "Intro"
@@ -59,6 +84,9 @@ class Intro(State):
         self.run()
 
     def run(self):
+        """
+        Runs the Intro
+        """
         super().run()
 
         display.clear()
@@ -84,9 +112,16 @@ class Intro(State):
 
 
 class ConfigAllEdit(State):
-    # This code intentionally obfuscated to prevent IP theft... no really, why are you laughing...
-    # luckily this can be added withouut changing any other code
-    # once there's time an actually designed class with the same inputs/outputs can be swapped in
+    """
+    This class is used to edit all config options for GenerateAll at one time.
+
+    :param State: the state of the program
+    :type State: State.Object
+
+    .. note:: This code intentionally obfuscated to prevent IP theft... no really, why are you laughing...
+        luckily this can be added withouut changing any other code
+        once there's time an actually designed class with the same inputs/outputs can be swapped in
+    """
 
     transMap = {"exit": "Exit", "menu": "Intro", "help": "Help", "generate": "GenerationPrompt"}
     optionsMap = {}
@@ -101,6 +136,9 @@ class ConfigAllEdit(State):
     generationIndex = []
 
     def run(self):
+        """
+        Runs ConfigAllEdit
+        """
         super().run()
         display.clear()
         completer.setCommands(list(self.transMap.keys()))
@@ -136,8 +174,8 @@ class ConfigAllEdit(State):
         for option in self.multipleApplicable:
             numSpaces = 40
             numSpaces = numSpaces - (len(str(optionNum))+len(option))
-            display.prompt("\t{0}[{1}] {2}:{3}{4}{5}".format(display.GREEN, optionNum, option,
-                                                             display.ENDC, ' '*numSpaces, self.multipleApplicable[option]))
+            display.prompt("\t{0}[{1}] {2}:{3}{4}{5}".format(display.GREEN, optionNum,
+                                                             option, display.ENDC, ' '*numSpaces, self.multipleApplicable[option]))
             tempDict[str(optionNum)] = option
             optionNum = optionNum+1
         self.multipleApplicable = {**self.multipleApplicable, **tempDict}  # ...I have nothing to say for myself
@@ -213,7 +251,12 @@ class ConfigAllEdit(State):
         if self.multipleSelection:
             self.editMultipleEntries()
 
-    def editMultipleEntries(self):  # Marcus did a bad thing
+    def editMultipleEntries(self):
+        """
+        Edits multiple config entries at once.
+
+        .. warning:: Marcus did a bad thing.
+        """
         if ConfigAllEdit.setValue == '' or ConfigAllEdit.setValue == None:
             ConfigAllEdit.setValue = input("Please enter a value for "+ConfigAllEdit.multipleOption+": ")
 
@@ -234,6 +277,16 @@ class ConfigAllEdit(State):
         ConfigAllEdit.setValue = ''
 
     def parse(self, config, curOptionNum):
+        """
+        Parses a config file.
+
+        :param config: config to parse
+        :param curOptionNum: current option number
+        :type config: ConfigParser.Object
+        :type curOptionNum: int
+        :returns: curOptionNum
+        :rtype: int
+        """
 
         cfgName = ''
         for section_name in config:
@@ -264,7 +317,7 @@ class ConfigAllEdit(State):
             curOptionNum += 1
 
             # if list(self.optionsMap.values()).count(section_name) > 1 and section_name not in self.multipleApplicable.values():
-            #	self.multipleApplicable[section_name] = section["var"]
+            #   self.multipleApplicable[section_name] = section["var"]
 
             if section_name not in self.multipleApplicable.values():
                 count = 0
@@ -279,6 +332,9 @@ class ConfigAllEdit(State):
         return(curOptionNum)
 
     def generateAll(self):
+        """
+        Generates all the payloads from loaded configs
+        """
         for i in self.configMap:
             if i["config"] not in ConfigAllEdit.generationIndex:
                 fileOps.setCurrentConfig(i["config"])
@@ -301,12 +357,21 @@ class ConfigAllEdit(State):
 
 
 class ConfigEdit(State):
+    """
+    This class is used to edit configuration options.
+
+    :param State: state of program
+    :type State: State.Object
+    """
     transMap = {"exit": "Exit", "menu": "Intro", "help": "Help", "generate": "GenerationPrompt"}
     optionsMap = {}  # will become a dict of {"0": "optionA" "1": "optionB"}
     # allows number input since the 0th actual content of config
     # will likely be DEFAULT, help or type data
 
     def run(self):
+        """
+        Runs the ConfigEdit
+        """
         super().run()
 
         display.clear()
@@ -339,7 +404,12 @@ class ConfigEdit(State):
         self.transition(selection, self.suppliedVal)
 
     def parse(self, config):
+        """
+        Parses a config file
 
+        :param config: config file object
+        :type config: ConfigParser.Object
+        """
         optionNum = 0
         for section_name in config:
 
@@ -369,11 +439,20 @@ class ConfigEdit(State):
 
 
 class OptionEdit(State):
+    """
+    This class edits the options in a config.
+
+    :param State: state of program
+    :type State: State.Object
+    """
     transMap = {"exit": "Exit", "ConfigEdit": "ConfigEdit", "ConfigAllEdit": "ConfigAllEdit"}
 
     validParams = []
 
     def run(self):
+        """
+        Runs the OptionEdit
+        """
         config = fileOps.getCurrentConfig()
         option = config[self.selection]
         self.validParams = self.parseOptions(option)
@@ -398,6 +477,14 @@ class OptionEdit(State):
 
         # TODO: Move valid param checking to fileops
     def parseOptions(self, option):
+        """
+        Parses the config options
+
+        :param option: options
+        :type option: list
+        :returns: validParams
+        :rtype: list
+        """
         validParams = []
 
         # TODO: just found this var, I don't know why it's here
@@ -413,8 +500,17 @@ class OptionEdit(State):
 
 
 class GenerationPrompt(State):
+    """
+    This class is used to display the generation prompt.
+
+    param State: state of program
+    :type State: State.Object
+    """
 
     def run(self):
+        """
+        Runs the GenerationPrompt
+        """
         config = fileOps.getCurrentConfig()
         t1 = threading.Thread(target=fileOps.generate, args=[config])
         t1.start()
@@ -438,7 +534,6 @@ class GenerationPrompt(State):
         except:
             pass
 
-
         try:
             domain = config["HostedDomain"]["var"]
         except KeyError:
@@ -449,11 +544,12 @@ class GenerationPrompt(State):
             generator.genRunScript(info)
             if 'HTA2Shell' in name:
                 os.system('wget -O ./GenerateAll/{0} {1} >/dev/null 2>&1'.format(hostedsct, sct))
-                display.prompt("{0}Downloading COM Scriptlet here:{1} ./GenerateAll/{2}".format(display.GREEN, display.ENDC, hostedsct))
+                display.prompt(
+                    "{0}Downloading COM Scriptlet here:{1} ./GenerateAll/{2}".format(display.GREEN, display.ENDC, hostedsct))
         elif 'regsvr32' in info:
             info = info.replace('./', domain + '/')
             generator.genRunScript(info)
-        elif  name == 'msbuild':
+        elif name == 'msbuild':
             info = info.replace('./GenerateAll/shellcode.xml', 'shellcode.xml')
             generator.genRunScript(info)
         else:
@@ -467,10 +563,19 @@ class GenerationPrompt(State):
 
 
 class Help(State):
+    """
+    This class is used to display help information.
+
+    :param State: state of program
+    :type State: State.Object
+    """
     transMap = {"Help": "Help", "Intro": "Intro", "ConfigEdit": "ConfigEdit",
                 "ConfigAllEdit": "ConfigAllEdit", "GenerationPrompt": "GenerationPrompt"}
 
     def run(self):
+        """
+        Runs Help
+        """
         display.clear()
 
         if self.prevState == "Intro":
@@ -579,12 +684,24 @@ class Help(State):
 
 
 class Exit(State):
+    """
+    This class exits the program.
+
+    :param State: state of program
+    :type State: State.Object
+    """
 
     def run(self):
+        """
+        Runs Exit
+        """
         exit(0)
 
 
 def main():
+    """
+    The main method of the program.
+    """
     intro = Intro()
     intro.firstRun()
 
