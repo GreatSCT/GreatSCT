@@ -13,7 +13,7 @@
 - [x] Make a Wiki
 - [ ] Write a blog post
 - [ ] Add all the bypasses
-- [ ] Finish PEP8 clean up
-- [ ] Write pydoc comments
+- [x] Finish PEP8 clean up
+- [x] Write pydoc comments
 - [x] Take new screenshots for README.md
 - [x] Create an API for Marcello
