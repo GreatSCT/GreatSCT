@@ -1,4 +1,4 @@
-# TODO
+# TODO v1.0
 - [x] Create list of all application white list bypasses available
 - [x] Create a wiki page with the current status of bypasses in the framework
 - [x] Fix HTAShellcode payload to include updated versions and add the COM scriptlet
@@ -13,7 +13,16 @@
 - [x] Make a Wiki
 - [ ] Write a blog post
 - [ ] Add all the bypasses
-- [ ] Finish PEP8 clean up
-- [ ] Write pydoc comments
+- [x] Finish PEP8 clean up
+- [x] Write pydoc comments
 - [x] Take new screenshots for README.md
 - [x] Create an API for Marcello
+# TODO v.1.1
+- [ ] Refactor and clean up framework code
+- [ ] Extend the RESTful API
+- [ ] Implement obfuscation into the framework for SCT payloads
+- [ ] Add all known obfuscation techniques for SCT payloads
+- [ ] Implement obfuscation into the framework for HTA payloads
+- [ ] Add all known obfuscation techniques for HTA payloads
+- [ ] Implement obfuscation into the framework for MSBUILD payloads
+- [ ] Add all known obfuscation techniques for MSBUILD payloads

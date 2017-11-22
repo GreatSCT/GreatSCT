@@ -31,7 +31,7 @@ The devs should fix this so you can specify an output folder, but they are lazy.
 ![](https://raw.githubusercontent.com/GreatSCT/GreatSCT/Images/gsImages/gsOutput.PNG)
 ___
 
-For network testing purposes use `generateAll` from the inital menu
+For testing the efficacy of an application whitelist policy,  use `generateAll` from the inital menu
 
 ![](https://raw.githubusercontent.com/GreatSCT/GreatSCT/Images/gsImages/gsGenAllSet.PNG)
 
@@ -40,7 +40,7 @@ This lets you easily set your C&C values for all the payloads.
 
 When it's all set `generate` and you'll find your payloads in ./GenerateAll/
 
-![](https://raw.githubusercontent.com/GreatSCT/GreatSCT/Images/gsImages/gsGenAllGenerate.PNG)
+![](https://raw.githubusercontent.com/GreatSCT/GreatSCT/Images/gsImages/genAllGenerate.PNG)
 
 Apache and metasploit will automatically start when the GenerateAll function finishes.
 
