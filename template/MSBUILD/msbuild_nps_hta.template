@@ -33,7 +33,7 @@ data:
     ' https://www.sans.org/reading-room/whitepapers/malicious/sleeping-sandbox-35797
     objShell.Run "%%COMSPEC%% /c ping -n 60 127.0.0.1>nul", 0, 1
 
-    For Each objUnicorn in arrUnicorns
+   For Each objUnicorn in arrUnicorns
       x = x + 1
 
       ' Create MSBuild XML File

