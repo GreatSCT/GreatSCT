@@ -4,10 +4,12 @@ from fileOps import *
 from completer import *
 from generator import *
 
+import argparse
 import readline
 import threading
 import time
 import os
+import sys
 
 """
 This module is the main program for GreatSCT.
@@ -521,19 +523,18 @@ class GenerationPrompt(State):
         end = ['/', '-', '\\', '|']
         while t1.is_alive():
             display.prompt("Generating: "+"="*i+end[i % 4], '\r')
-            time.sleep(0.3)
+            time.sleep(1)
             i = i+1
 
         t1.join()
+
         display.prompt("{0}Generating: ||{1}||{2}\n".format(display.GREEN, '='*i, display.ENDC))
+        display.verbose_prompt("Starting try except block that sucks")
 
         try:
             info = config["Type"]["runInfo"]
             output = config["Output"]["var"]
             name = config["Type"]["name"]
-            if "allthethings" in output:
-                generator.compileAllTheThings(output)
-                info = info.replace('.cs', '.dll')
         except KeyError:
             pass
 
@@ -542,9 +543,9 @@ class GenerationPrompt(State):
 
             if domain:
                 if "GenerateAll" in info:
-                    info = info.replace(output, '"{0}/{1}"'.format(domain, output.replace("./", "")))
+                    info = info.replace(output, '{0}/{1}'.format(domain, output.replace("./", "")))
                 else:
-                    info = info.replace(output, '"{0}/{1}"'.format(domain, output))
+                    info = info.replace(output, '{0}/{1}'.format(domain, output))
         except KeyError:
             domain = False
             pass
@@ -569,16 +570,46 @@ class GenerationPrompt(State):
         except KeyError:
             pass
 
+        try:
+            display.verbose_prompt("Setting compile variables from config")
+            lang = config["Compile"]["var"]
+            compiler = config["Compile"]["cmd"]
+            display.verbose_prompt("lang: {0}".format(lang))
+        except KeyError:
+            display.verbose_prompt("KeyError happened while setting compile variables")
+            pass
+
+        try:
+            sign = config["Compile"]["sign"]
+        except KeyError:
+            sign = None
+
+        # The magicical logic for compiling .NET/C# on Linux
+        # Remidner to figure out how to do this more dynamically
+        try:
+            if "CSharp" in lang:
+                build_steps = []
+                if sign:
+                    display.verbose_prompt("Compiling CSharp")
+                    build_steps.append(sign)
+                    build_steps.append(compiler)
+                    generator.genCSharpExe(build_steps)
+                else:
+                    build_steps.append(compiler)
+                    generator.genCSharpExe(build_steps)
+        except:
+            pass
+
         if domain is False:
             if "GenerateAll" in info:
-                print("info: " + info)
-                print("output: " + output.replace('./GenerateAll/', ''))
+                display.verbose_prompt("info: " + info)
+                display.verbose_prompt("output: " + output.replace('./GenerateAll/', ''))
                 info = info.replace('./GenerateAll/', '')
-                print("genall: " + info)
+                display.verbose_prompt("genall: " + info)
 
-        print(info)
+        display.verbose_prompt(info)
         generator.genRunScript(info)
-
+        display.verbose_prompt("ending")
         display.prompt("{0}Execute with: {1}".format(display.GREEN, display.ENDC), '')
         display.prompt(info, '\n\n')
 
@@ -718,13 +749,79 @@ class Exit(State):
         """
         exit(0)
 
+def cli_parser():
+    # Command line argument parser
+    parser = argparse.ArgumentParser(
+        add_help=False,
+        description="GreatSCT is a tool used to generate application whitelisting bypass payloads.")
+    parser.add_argument(
+        '-h', '-?', '--h', '-help', '--help', action="store_true",
+        help=argparse.SUPPRESS)
+
+    config = parser.add_argument_group('Payload Config Options')
+    config.add_argument("--config", "-c", default=None, metavar="msbuild",
+        help="The name of the configuration file.")
+
+    parser.add_argument("--configs", "--list-configs", default=None, action="store_true",
+        help="Lists the configurations available within GreatSCT.")
+
+    parser.add_argument("--templates", "--list-templates", default=None, action="store_true",
+        help="Lists the templates available within GreatSCT")
+
+    parser.add_argument("--verbose", "-v", default=None, action="store_true",
+        help="Enables verbose mode to print more information.")
+
+    parser.add_argument("--debug", "-d", default=None, action="store_true",
+        help="Enables debug mode to print more information.")
+
+    args = parser.parse_args()
+
+    if args.h:
+        parser.print_help()
+        sys.exit()
+
+    return args
+
 
 def main():
     """
     The main method of the program.
     """
-    intro = Intro()
-    intro.firstRun()
+    cli_parsed = cli_parser()
+
+    if cli_parsed.verbose:
+        display.verbose = True
+        generator.verbose = True
+        fileOps.verbose = True
+        display.verbose_prompt("Verbose mode enabled")
+    else:
+        display.verbose = False
+        generator.verbose = False
+        fileOps.verbose = False
+
+    if cli_parsed.debug:
+        display.debug = True
+        display.debug_prompt("Debug mode enabled.")
+
+    if cli_parsed.configs:
+        display.prompt("The config files available witin GreatSCT: {0}".format(fileOps.getConfigs()))
+
+    if cli_parsed.config:
+        display.verbose_prompt("Generating a config via CLI options.")
+        display.verbose_prompt(cli_parsed.config)
+        display.verbose_prompt(fileOps.getConfigs())
+        for c in fileOps.getConfigs():
+            if cli_parsed.config in c:
+                config = c
+                display.verbose_prompt(config)
+
+        fileOps.loadConfig(config)
+        current = fileOps.getCurrentConfig()
+        execution = current["Type"]["runInfo"]
+        GenerationPrompt.run(current)
+    else:
+        intro = Intro()
+        intro.firstRun()
 
 
 if __name__ == '__main__':

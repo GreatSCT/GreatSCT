@@ -34,6 +34,8 @@ class Display:
     GREEN = "\033[92m"
     ENDC = "\033[0m"
 
+    debug = False
+    verbose = False
     color = Color()
     clearCMD = ''
     intro = """                     ______,------'--"-.
@@ -78,15 +80,18 @@ ___________________________________________________________
 Lopi                                               Dietrich
     An App Whitlisting Bypass Generation Tool"""
 
-    def init(self):
+    def init(self, verbose=False, debug=False):
         """
         Initalizes the class
         """
+
         if (os.name == 'nt'):
             Display.clearCMD = 'cls'
         else:
             Display.clearCMD = 'clear'
 
+        self.debug = debug
+        self.verbose = verbose
         self.clear()
 
         print(self.intro)
@@ -107,3 +112,11 @@ Lopi                                               Dietrich
         :type term: string
         """
         print(item, end=term)
+
+    def verbose_prompt(self, item):
+        if self.verbose:
+            self.prompt("VERBOSE: {0}".format(item))
+
+    def debug_prompt(self, item):
+        if self.debug:
+            self.prompt("DEBUG: {0}".format(item))

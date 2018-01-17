@@ -8,14 +8,15 @@ This module is used for file operations.
 """
 
 
-class FileOps():
+class FileOps:
     """
     This class is used for file operations.
     """
     configDir = ''
     selectedConfig = None
+    verbose = False
 
-    def __init__(self, configDir):
+    def __init__(self, configDir, verbose=False):
         """
         Initalize the FileOps class
 
@@ -23,6 +24,7 @@ class FileOps():
         :type configDir: string
         """
         FileOps.configDir = configDir
+        FileOps.verbose = verbose
 
     def getConfigs(self):
         """
@@ -116,6 +118,7 @@ class FileOps():
         template = ConfigParser(interpolation=ExtendedInterpolation(), comment_prefixes=None)
         template.optionxform = str
         template.read(FileOps.selectedConfig["Type"]["template"])
+        self.verbose_prompt("Config parsed")
 
         return (self.genFromTemplate(template))
 
@@ -138,7 +141,7 @@ class FileOps():
         outfile = "output.gr8sct"
         runInfo = ''
         preserveWhitespace = False
-
+        self.verbose_prompt("Parsing config options")
         for config_section in FileOps.selectedConfig:
             if config_section != "DEFAULT" and config_section != "Type":
                 var = FileOps.selectedConfig[config_section]["var"]
@@ -161,6 +164,7 @@ class FileOps():
                 payload = FileOps.selectedConfig[config_section]["var"]
 
         generator = Generator()
+        self.verbose_prompt("Starting generation of the template")
 
         for template_section in template:
             section = template[template_section]
@@ -175,9 +179,11 @@ class FileOps():
                     shellcodex64 = generator.encodeShellcode(section["value"], payload, extraProcessing)
                     section["value"] = shellcodex64
                 else:
+                    self.verbose_prompt("Starting msfvenom")
                     # Metasploit 64 bit shellcode generation
                     shellcodex64 = generator.genShellcode(domain, port, "x64", name, payload, extraProcessing)
                     section["value"] = shellcodex64
+                    self.verbose_prompt("end of msfvenom")
 
             elif template_section == "ShellCodex86" or template_section == "ShellCode":
                 extraProcessing = None
@@ -199,7 +205,7 @@ class FileOps():
                 try:
                     section["value"] = processingMap[section["process"]](section["value"])
                 except KeyError:
-                    print("Error: Template Processing type {0} is not supported".format(section["process"]))
+                    self.verbose_prompt("Error: Template Processing type {0} is not supported".format(section["process"]))
 
             elif template_section == "PreserveWhitespace":
                 preserveWhitespace = section["value"]
@@ -220,6 +226,8 @@ class FileOps():
 
         else:
             f.write(payload)
+
+        self.verbose_prompt("Template done")
 
         return runInfo
 
@@ -261,3 +269,7 @@ class FileOps():
                 os.remove(f)
             except FileNotFoundError:
                 pass
+
+    def verbose_prompt(self, item):
+        if self.verbose:
+            print("VERBOSE: {0}".format(item))

