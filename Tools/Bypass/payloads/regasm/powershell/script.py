@@ -49,6 +49,17 @@ class PayloadModule:
 
 
     def generate(self):
+        options = []
+        for option in self.cli_opts.c:
+            if "," in option:
+                options = option.split(",")
+            if " " in option:
+                options = option.split(" ")
+
+        for o in options:
+            for i in self.required_options:
+                if i in o:
+                    self.required_options[i][0] = o.strip("{0}=".format(i))
 
         with open(self.required_options["SCRIPT"][0], "r") as f:
             the_script = f.read()
