@@ -131,7 +131,7 @@ func_package_deps(){
       echo -e "\n [*] ${YELLOW}Adding x86 architecture to x86_64 system for Wine${RESET}\n"
       sudo ${arg} dpkg --add-architecture i386
       sudo ${arg} apt-get -qq update -y
-      sudo ${arg} apt-get -y -qq install monodevelop mono-mcs unzip wget git ruby p7zip wine wine32 wine64 winbind
+      sudo ${arg} apt-get -y -qq install monod-complete mono-mcs unzip wget git ruby p7zip wine wine32 wine64 winbind
       func_get_powershell_dll
       func_install_wine_dotnettojscript
     fi
