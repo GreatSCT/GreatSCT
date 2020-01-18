@@ -5,7 +5,7 @@ import platform, os, sys, pwd
 def which(program):
     path = os.getenv('PATH')
     for p in path.split(os.path.pathsep):
-        p = os.path.join(p, program)
+        p = os.path.realpath(os.path.join(p, program))
         if os.path.exists(p) and os.access(p, os.X_OK):
             return p
     return False
@@ -161,7 +161,7 @@ if __name__ == '__main__':
         issue = open("/etc/issue").read()
 
         # resolve metasploit & msfvenom paths
-        msfpath = os.path.dirname(which('msfconsole'))
+        msfpath = os.path.dirname(which('msfvenom'))
         if os.path.isdir(msfpath) and os.path.isfile(os.path.join(msfpath, 'msfconsole')):
             options["METASPLOIT_PATH"] = msfpath
             if os.path.isfile(os.path.join(msfpath, 'msfvenom')):
