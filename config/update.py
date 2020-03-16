@@ -2,6 +2,25 @@
 
 import platform, os, sys, pwd
 
+def which(program):
+    path = os.getenv('PATH')
+    for p in path.split(os.path.pathsep):
+        p = os.path.realpath(os.path.join(p, program))
+        if os.path.exists(p) and os.access(p, os.X_OK):
+            return p
+    return False
+
+
+def validate_msfpath():
+    msfpath = None
+    while not msfpath:
+        msfpath = input(" [>] Please enter the path of your metasploit installation: ")
+        if not os.path.isfile(os.path.join(msfpath, 'msfvenom')):
+            print("[!] Unable to detect metasploit at this path")
+            msfpath = None
+    options["METASPLOIT_PATH"] = msfpath
+    options["MSFVENOM_PATH"] = msfpath
+
 """
 
 Take an options dictionary and update /etc/greatsct/settings.py
@@ -141,24 +160,23 @@ if __name__ == '__main__':
         # check /etc/issue for the exact linux distro
         issue = open("/etc/issue").read()
 
+        # resolve metasploit & msfvenom paths
+        msfpath = os.path.dirname(which('msfvenom'))
+        if os.path.isdir(msfpath) and os.path.isfile(os.path.join(msfpath, 'msfconsole')):
+            options["METASPLOIT_PATH"] = msfpath
+            if os.path.isfile(os.path.join(msfpath, 'msfvenom')):
+                options["MSFVENOM_PATH"] = msfpath
+            else:
+                validate_msfpath()
+        else:
+            validate_msfpath()
+
         if issue.startswith("Kali"):
             options["OPERATING_SYSTEM"] = "Kali"
             options["TERMINAL_CLEAR"] = "clear"
-            options["METASPLOIT_PATH"] = "/usr/share/metasploit-framework/"
-            if os.path.isfile('/usr/bin/msfvenom'):
-                options["MSFVENOM_PATH"] = "/usr/bin/"
-            else:
-                msfpath = raw_input(" [>] Please enter the path of your metasploit installation: ")
-                options["MSFVENOM_PATH"] = msfpath
         else:
             options["OPERATING_SYSTEM"] = "Linux"
             options["TERMINAL_CLEAR"] = "clear"
-            msfpath = raw_input(" [>] Please enter the path of your metasploit installation: ")
-            options["METASPLOIT_PATH"] = msfpath
-            if os.path.isfile('/usr/bin/msfvenom'):
-                options["MSFVENOM_PATH"] = "/usr/bin/"
-            else:
-                options["MSFVENOM_PATH"] = msfpath
 
         # last of the general options
         options["TEMP_DIR"] = "/tmp/"

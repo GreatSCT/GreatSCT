@@ -186,6 +186,7 @@ func_update_config(){
   sudo -u "${trueuser}" sudo python update.py
 
   mkdir -p "${outputfolder}"
+  mkdir -p "${winedir}"
 
   # Chown output directory
   if [ -d "${outputfolder}" ]; then
