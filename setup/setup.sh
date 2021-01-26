@@ -145,7 +145,7 @@ func_package_deps(){
 
   elif [ "${os}" ==  "arch" ] || [ "${os}" == "blackarch" ]; then
     sudo pacman -Sy ${arg} --needed mono mono-tools mono-addins wget unzip ruby python ca-certificates \
-     base-devels
+     base-devel
   fi
   tmp="$?"
   if [ "${tmp}" -ne "0" ]; then
