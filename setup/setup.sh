@@ -222,9 +222,6 @@ func_install_wine_dotnettojscript(){
   wget  https://raw.githubusercontent.com/Winetricks/winetricks/master/src/winetricks
   mv ./winetricks /usr/bin/winetricks
   chmod +x /usr/bin/winetricks
-  wget https://blog.conscioushacker.io/wine.tgz
-  tar zxf ./wine.tgz
-  sudo dpkg -i ./*.deb
   WINEARCH=win32 WINEPREFIX="$winedir" winecfg
   WINEARCH=win32 WINEPREFIX="$winedir" winetricks -q dotnet35
   mkdir /usr/share/greatsct
