@@ -11,7 +11,7 @@ arg=""
 errors=""
 outputfolder="/usr/share/greatsct-output"
 runuser="$(whoami)"
-if [ "${os}" == "ubuntu" ] || [ "${os}" == "arch" ] || [ "${os}" == "blackarch" ] || [ "${os}" == "debian" ] || [ "${os}" == '"elementary"' ] || [ "${os}" == "deepin" ] || [ "${os}" == "linuxmint" ] ; then
+if [ "${os}" == "ubuntu" ] || [ "${os}" == "arch" ] || [ "${os}" == "blackarch" ] || [ "${os}" == "manjaro" ] || [ "${os}" == "debian" ] || [ "${os}" == '"elementary"' ] || [ "${os}" == "deepin" ] || [ "${os}" == "linuxmint" ] ; then
   trueuser="$(who | tr -d '\n' | cut -d' ' -f1)"
 else
   trueuser="$(who am i | cut -d' ' -f1)" # If this is blank, we're actually root (kali)
@@ -143,7 +143,7 @@ func_package_deps(){
     sudo ${arg} dnf -y install mingw64-binutils mingw64-cpp mingw64-gcc mingw64-gcc-c++ mono-tools-monodoc monodoc \
       monodevelop mono-tools mono-core wine unzip ruby golang wget git ruby python
 
-  elif [ "${os}" ==  "arch" ] || [ "${os}" == "blackarch" ]; then
+  elif [ "${os}" ==  "arch" ] || [ "${os}" == "blackarch" ] || [ "${os}" == "manjaro" ]; then
     sudo pacman -Sy ${arg} --needed mono mono-tools mono-addins wget unzip ruby python ca-certificates \
      base-devel
   fi
@@ -222,9 +222,6 @@ func_install_wine_dotnettojscript(){
   wget  https://raw.githubusercontent.com/Winetricks/winetricks/master/src/winetricks
   mv ./winetricks /usr/bin/winetricks
   chmod +x /usr/bin/winetricks
-  wget https://blog.conscioushacker.io/wine.tgz
-  tar zxf ./wine.tgz
-  sudo dpkg -i ./*.deb
   WINEARCH=win32 WINEPREFIX="$winedir" winecfg
   WINEARCH=win32 WINEPREFIX="$winedir" winetricks -q dotnet35
   mkdir /usr/share/greatsct
@@ -285,6 +282,8 @@ else
     echo -e " [I] ${YELLOW}Arch Linux ${arch} detected...${RESET}\n"
   elif [ "${os}" == "blackarch" ]; then
 	echo -e " [I] ${RED}BlackArch Linux ${arch} detected...${RESET}\n"
+  elif [ "${os}" == "manjaro" ]; then
+  	echo -e " [I] ${YELLOW}Manjaro Linux ${arch} detected...${RESET}\n"
   elif [ "${os}" == "debian" ]; then
     echo -e " [!] ${RED}Debian Linux sid/TESTING ${arch} *possibly* detected..."
     echo -e "     If you are not currently running Debian Testing, you should exit this installer!${RESET}\n"
